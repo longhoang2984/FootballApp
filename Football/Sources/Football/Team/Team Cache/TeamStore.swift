@@ -9,6 +9,6 @@ import Foundation
 
 public protocol TeamStore {
     func deleteCachedTeam() throws
-    func insert(_ feed: [LocalTeam], timestamp: Date) throws
+    func insert(_ feed: [LocalTeam]) throws
     func retrieve() throws -> [LocalTeam]?
 }
