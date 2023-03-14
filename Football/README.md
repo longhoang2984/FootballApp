@@ -357,5 +357,4 @@ GET https://jmde6xvjr4.execute-api.us-east-1.amazonaws.com/teams
 ---
 ## App Architecture
 
-![](https://imgur.com/download/fKx2tjm)
-![[footballapp.png]]
+![[../Sources/footballapp.png]]
