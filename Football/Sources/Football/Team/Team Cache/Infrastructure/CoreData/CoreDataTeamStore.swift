@@ -9,7 +9,7 @@ import CoreData
 
 public class CoreDataTeamStore {
     private static let modelName = "TeamStore"
-    private static let model = NSManagedObjectModel.with(name: modelName, in: Bundle(for: CoreDataTeamStore.self))
+    private static let model = NSManagedObjectModel.with(name: modelName, in: Bundle.module)
     
     private let container: NSPersistentContainer
     private let context: NSManagedObjectContext

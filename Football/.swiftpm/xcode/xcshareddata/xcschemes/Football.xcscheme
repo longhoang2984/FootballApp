@@ -30,23 +30,14 @@
       codeCoverageEnabled = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO"
-            testExecutionOrdering = "random">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2F4EC1D129C08EB500B365AD"
-               BuildableName = "FootballAppTests.xctest"
-               BlueprintName = "FootballAppTests"
-               ReferencedContainer = "container:../FootballApp/FootballApp.xcodeproj">
+               BlueprintIdentifier = "FootballTests"
+               BuildableName = "FootballTests"
+               BlueprintName = "FootballTests"
+               ReferencedContainer = "container:">
             </BuildableReference>
-            <SelectedTests>
-               <Test
-                  Identifier = "FootballAppTests/testExample()">
-               </Test>
-               <Test
-                  Identifier = "FootballAppTests/testPerformanceExample()">
-               </Test>
-            </SelectedTests>
          </TestableReference>
       </Testables>
    </TestAction>
