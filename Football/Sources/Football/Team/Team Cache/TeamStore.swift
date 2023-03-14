@@ -7,8 +7,10 @@
 
 import Foundation
 
+public typealias CachedTeam = ([LocalTeam])
+
 public protocol TeamStore {
     func deleteCachedTeam() throws
-    func insert(_ feed: [LocalTeam]) throws
-    func retrieve() throws -> [LocalTeam]?
+    func insert(_ teams: [LocalTeam]) throws
+    func retrieve() throws -> CachedTeam?
 }
