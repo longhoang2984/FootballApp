@@ -8,7 +8,7 @@
 import XCTest
 import Football
 
-extension FailableRetrieveTeamStoreSpecs where Self: XCTestCase {
+extension FailableRetrieveStoreSpecs where Self: XCTestCase {
     func assertThatRetrieveDeliversFailureOnRetrievalError(on sut: TeamStore, file: StaticString = #filePath, line: UInt = #line) {
         expect(sut, toRetrieve: .failure(anyNSError()), file: file, line: line)
     }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol TeamStoreSpecs {
+protocol StoreSpecs {
     func test_retrieve_deliversEmptyOnEmptyCache()
     func test_retrieve_hasNoSideEffectsOnEmptyCache()
     func test_retrieve_deliversFoundValuesOnNonEmptyCache()
@@ -23,19 +23,19 @@ protocol TeamStoreSpecs {
     func test_delete_emptiesPreviouslyInsertedCache()
 }
 
-protocol FailableRetrieveTeamStoreSpecs: TeamStoreSpecs {
+protocol FailableRetrieveStoreSpecs: StoreSpecs {
     func test_retrieve_deliversFailureOnRetrievalError()
     func test_retrieve_hasNoSideEffectsOnFailure()
 }
 
-protocol FailableInsertTeamStoreSpecs: TeamStoreSpecs {
+protocol FailableInsertStoreSpecs: StoreSpecs {
     func test_insert_deliversErrorOnInsertionError()
     func test_insert_hasNoSideEffectsOnInsertionError()
 }
 
-protocol FailableDeleteTeamStoreSpecs: TeamStoreSpecs {
+protocol FailableDeleteStoreSpecs: StoreSpecs {
     func test_delete_deliversErrorOnDeletionError()
     func test_delete_hasNoSideEffectsOnDeletionError()
 }
 
-typealias FailableTeamStoreSpecs = FailableRetrieveTeamStoreSpecs & FailableInsertTeamStoreSpecs & FailableDeleteTeamStoreSpecs
+typealias FailableStoreSpecs = FailableRetrieveStoreSpecs & FailableInsertStoreSpecs & FailableDeleteStoreSpecs

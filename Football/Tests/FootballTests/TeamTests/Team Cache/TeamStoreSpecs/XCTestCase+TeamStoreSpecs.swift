@@ -8,7 +8,7 @@
 import XCTest
 import Football
 
-extension TeamStoreSpecs where Self: XCTestCase {
+extension StoreSpecs where Self: XCTestCase {
 
     func assertThatRetrieveDeliversEmptyOnEmptyCache(on sut: TeamStore, file: StaticString = #filePath, line: UInt = #line) {
         expect(sut, toRetrieve: .success(.none), file: file, line: line)
@@ -87,7 +87,7 @@ extension TeamStoreSpecs where Self: XCTestCase {
 
 }
 
-extension TeamStoreSpecs where Self: XCTestCase {
+extension StoreSpecs where Self: XCTestCase {
     @discardableResult
     func insert(_ cache: ([LocalTeam]), to sut: TeamStore) -> Error? {
         do {

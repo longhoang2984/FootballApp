@@ -8,7 +8,7 @@
 import XCTest
 import Football
 
-extension FailableDeleteTeamStoreSpecs where Self: XCTestCase {
+extension FailableDeleteStoreSpecs where Self: XCTestCase {
     func assertThatDeleteDeliversErrorOnDeletionError(on sut: TeamStore, file: StaticString = #filePath, line: UInt = #line) {
         let deletionError = deleteCache(from: sut)
         
