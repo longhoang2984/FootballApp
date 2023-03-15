@@ -7,9 +7,25 @@
 
 import Foundation
 
-public protocol Match {
-    var date: Date { get }
-    var description: String { get }
-    var home: String { get }
-    var away: String { get }
+public struct Match: Hashable {
+    public let date: Date
+    public let description: String
+    public let home: String
+    public let away: String
+    public let winner: String?
+    public let highlights: URL?
+    
+    public init(date: Date,
+                description: String,
+                home: String,
+                away: String,
+                winner: String? = nil,
+                highlights: URL? = nil) {
+        self.date = date
+        self.description = description
+        self.home = home
+        self.away = away
+        self.winner = winner
+        self.highlights = highlights
+    }
 }
