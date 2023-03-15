@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21279" systemVersion="22C65" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="ManagedMatch" representedClassName="ManagedMatch" syncable="YES">
+        <attribute name="away" attributeType="String"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="highlights" optional="YES" attributeType="URI"/>
+        <attribute name="home" attributeType="String"/>
+        <attribute name="matchDescription" attributeType="String"/>
+        <attribute name="winner" optional="YES" attributeType="String"/>
+        <relationship name="cache" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ManagedMatchCache" inverseName="matches" inverseEntity="ManagedMatchCache"/>
+    </entity>
+    <entity name="ManagedMatchCache" representedClassName="ManagedMatchCache" syncable="YES">
+        <relationship name="matches" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ManagedMatch" inverseName="cache" inverseEntity="ManagedMatch"/>
+    </entity>
+</model>
