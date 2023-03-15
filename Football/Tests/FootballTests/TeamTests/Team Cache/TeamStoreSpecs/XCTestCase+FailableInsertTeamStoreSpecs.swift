@@ -8,7 +8,7 @@
 import XCTest
 import Football
 
-extension FailableInsertTeamStoreSpecs where Self: XCTestCase {
+extension FailableInsertStoreSpecs where Self: XCTestCase {
     func assertThatInsertDeliversErrorOnInsertionError(on sut: TeamStore, file: StaticString = #filePath, line: UInt = #line) {
         let insertionError = insert((uniqueTeams().local), to: sut)
         

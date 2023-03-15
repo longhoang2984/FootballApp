@@ -8,7 +8,7 @@
 import XCTest
 import Football
 
-final class CoreDataTeamStoreTests: XCTestCase, TeamStoreSpecs {
+final class CoreDataTeamStoreTests: XCTestCase, StoreSpecs {
 
     func test_retrieve_deliversEmptyOnEmptyCache() {
         let sut = makeSUT()
