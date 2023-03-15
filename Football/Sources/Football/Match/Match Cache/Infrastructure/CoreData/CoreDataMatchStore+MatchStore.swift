@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension CoreDataTeamStore: MatchStore {
+extension CoreDataMatchStore: MatchStore {
     public func deleteCachedMatch() throws {
         try performSync { context in
             Result {

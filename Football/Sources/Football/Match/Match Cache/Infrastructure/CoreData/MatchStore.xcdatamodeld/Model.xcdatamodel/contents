@@ -10,6 +10,6 @@
         <relationship name="cache" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ManagedMatchCache" inverseName="matches" inverseEntity="ManagedMatchCache"/>
     </entity>
     <entity name="ManagedMatchCache" representedClassName="ManagedMatchCache" syncable="YES">
-        <relationship name="matches" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ManagedMatch" inverseName="cache" inverseEntity="ManagedMatch"/>
+        <relationship name="matches" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="ManagedMatch" inverseName="cache" inverseEntity="ManagedMatch"/>
     </entity>
 </model>
