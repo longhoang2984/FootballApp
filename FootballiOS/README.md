@@ -4,7 +4,7 @@
 
 Dark | Light
 --- | ---
-![](./Sources/dark_mode.gif) | ![](./Sources/light_mode.gif)
+![](../Sources/dark_mode.gif) | ![](../Sources/light_mode.gif)
 
 ---
 
