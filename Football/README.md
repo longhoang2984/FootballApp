@@ -103,8 +103,8 @@
 #### Matches
 Property | Type 
 --- | ---
-`previous` | Array\<PreviousMatch\>
-`upcoming` | Array\<UpcomingMatch\>
+`previous` | Array\<Match\>
+`upcoming` | Array\<Match\>
 
 
 #### Match Protocol
@@ -114,14 +114,8 @@ Property | Type
 `description` | String
 `home` | String
 `away` | String
-
-#### PreviousMatch : Match
-Property | Type
---- | ---
-`winner` | String
-`highlights` | URL
-
-#### UpcomingMatch : Match
+`winner` | String?
+`highlights` | URL?
 
 #### Payload contract
 
