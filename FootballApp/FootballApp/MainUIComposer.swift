@@ -21,15 +21,15 @@ public final class MainUIComposer {
         awayImageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
         selection: @escaping (DisplayModel) -> Void = { _ in }
     ) -> MainViewController {
-        let logoAdapter = TeamLogoAdapter(viewModel: viewModel, imageLoader: imageLoader,
+        
+        let mainVC = makeMainViewController(title: "Matches", viewModel: viewModel)
+        let logoAdapter = TeamLogoAdapter(viewModel: viewModel, controller: mainVC, imageLoader: imageLoader,
                                           awayImageLoader: awayImageLoader)
         let adapter = LoadResourcePresentationAdapter(viewModel: viewModel,
                                                       teamLoader: teamLoader,
                                                       matchLoader: matchLoader,
                                                       adapter: logoAdapter)
         
-        
-        let mainVC = makeMainViewController(title: "Matches", viewModel: viewModel)
         viewModel.onGetData = adapter.loadResource
         
         return mainVC

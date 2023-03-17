@@ -63,7 +63,7 @@ public final class MainViewController: UICollectionViewController, UICollectionV
     private func setUpFilter() {
         view.addSubview(filterField)
         NSLayoutConstraint.activate([
-            filterField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            filterField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             filterField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             view.trailingAnchor.constraint(equalTo: filterField.trailingAnchor, constant: 8)
         ])
@@ -81,6 +81,7 @@ public final class MainViewController: UICollectionViewController, UICollectionV
         collectionView.register(MatchCell.self, forCellWithReuseIdentifier: String(describing: MatchCell.self))
         collectionView.refreshControl = refreshControl
         collectionView.dataSource = dataSource
+        collectionView.contentInset.top = 50
     }
     
     @objc private func refresh() {

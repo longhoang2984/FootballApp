@@ -9,6 +9,7 @@ import UIKit
 import Football
 import FootballiOS
 import Combine
+import AVKit
 
 final class TeamLogoLoaderAdapter<Img>: MatchCellControllerDelegate {
     
@@ -47,6 +48,7 @@ final class TeamLogoLoaderAdapter<Img>: MatchCellControllerDelegate {
 }
 
 final class TeamLogoAdapter {
+    private weak var controller: MainViewController?
     private let imageLoader: (URL) -> TeamLogoDataLoader.Publisher
     private let awayImageLoader: (URL) -> TeamLogoDataLoader.Publisher
 
@@ -54,11 +56,13 @@ final class TeamLogoAdapter {
     private var cancellables = Set<AnyCancellable>()
     private let viewModel: DisplayViewModel
     init(viewModel: DisplayViewModel,
+         controller: MainViewController,
         imageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
-         awayImageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher) {
+        awayImageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher) {
         self.viewModel = viewModel
         self.imageLoader = imageLoader
         self.awayImageLoader = awayImageLoader
+        self.controller = controller
     }
     
     func handleSuccessData(teams: [Team], matches: [Match]) {
@@ -92,7 +96,10 @@ final class TeamLogoAdapter {
             let view = MatchCellController(model: displayModel,
                                            homeDelegate: homeAdapter,
                                            awayDelegate: awayAdapter,
-                                           selection: {  })
+                                           selection: {  },
+                                           onShowHighlight: { [weak self] in
+                self?.playHighlight(url: match.highlights)
+            })
             view.homeImageViewModel = homeLogoVM
             
             view.awayImageViewModel = awayLogoVM
@@ -102,6 +109,17 @@ final class TeamLogoAdapter {
         }
         
         viewModel.input.send(.showControllers(controllers: cellControllers))
+    }
+    
+    private func playHighlight(url: URL?) {
+        guard let url = url else { return }
+        let videoURL = URL(string: url.absoluteString)
+        let player = AVPlayer(url: videoURL!)
+        let playerViewController = AVPlayerViewController()
+        playerViewController.player = player
+        controller?.present(playerViewController, animated: true) {
+            playerViewController.player!.play()
+        }
     }
 }
 
