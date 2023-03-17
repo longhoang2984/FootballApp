@@ -47,7 +47,7 @@ final class MatchesSnapshotTests: XCTestCase {
         return (sut, spy)
     }
     
-    private class ViewModelSpy: DisplayViewModel {}
+    private class ViewModelSpy: AppViewModel {}
     
     private class Stub: MatchCellControllerDelegate {
         private let vm: TeamLogoViewModel<UIImage>

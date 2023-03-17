@@ -14,7 +14,7 @@ public final class MainUIComposer {
     private init() {}
     
     public static func mainComposedWith(
-        viewModel: DisplayViewModel,
+        viewModel: AppViewModel,
         teamLoader: @escaping () -> AnyPublisher<[Team], Error>,
         matchLoader: @escaping () -> AnyPublisher<[Match], Error>,
         imageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
@@ -38,7 +38,7 @@ public final class MainUIComposer {
     
     
     
-    private static func makeMainViewController(title: String, viewModel: DisplayViewModel) -> MainViewController {
+    private static func makeMainViewController(title: String, viewModel: AppViewModel) -> MainViewController {
         MainViewController(viewModel: viewModel)
     }
 }

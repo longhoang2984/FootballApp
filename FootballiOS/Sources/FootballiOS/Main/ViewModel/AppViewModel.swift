@@ -1,5 +1,5 @@
 //
-//  DisplayViewModel.swift
+//  AppViewModel.swift
 //  
 //
 //  Created by Cửu Long Hoàng on 17/03/2023.
@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import Football
 
-public class DisplayViewModel {
+public class AppViewModel {
     public init() {}
     
     public enum Input {

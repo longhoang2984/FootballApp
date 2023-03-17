@@ -10,10 +10,10 @@ import Football
 import Combine
 
 public final class MainViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching {
-    private var viewModel: DisplayViewModel
+    private var viewModel: AppViewModel
     private var cancellables = Set<AnyCancellable>()
     
-    public init(viewModel: DisplayViewModel) {
+    public init(viewModel: AppViewModel) {
         self.viewModel = viewModel
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
     }

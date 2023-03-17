@@ -54,8 +54,8 @@ final class TeamLogoAdapter {
 
     private typealias TeamLogoViewModelAdapter = TeamLogoLoaderAdapter<UIImage>
     private var cancellables = Set<AnyCancellable>()
-    private let viewModel: DisplayViewModel
-    init(viewModel: DisplayViewModel,
+    private let viewModel: AppViewModel
+    init(viewModel: AppViewModel,
          controller: MainViewController,
         imageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
         awayImageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher) {

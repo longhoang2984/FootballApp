@@ -14,13 +14,13 @@ final class LoadResourcePresentationAdapter {
     private let matchLoader: () -> AnyPublisher<[Match], Error>
     private var cancellable: Cancellable?
     private var isLoading = false
-    private let viewModel: DisplayViewModel
+    private let viewModel: AppViewModel
     private var cancellables = Set<AnyCancellable>()
     private let adapter: TeamLogoAdapter
     private var matches: [Match] = []
     private var teams: [Team] = []
     
-    init(viewModel: DisplayViewModel,
+    init(viewModel: AppViewModel,
          teamLoader: @escaping () -> AnyPublisher<[Team], Error>,
          matchLoader: @escaping () -> AnyPublisher<[Match], Error>,
          adapter: TeamLogoAdapter) {
