@@ -110,7 +110,7 @@ final class TeamLogoAdapter {
             return controller
         }
         
-        viewModel.input.send(.showControllers(controllers: cellControllers))
+        viewModel.send(.showControllers(controllers: cellControllers))
     }
     
     private func playHighlight(url: URL?) {

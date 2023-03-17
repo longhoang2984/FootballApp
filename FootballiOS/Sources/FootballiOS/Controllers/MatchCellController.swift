@@ -15,7 +15,6 @@ public protocol MatchCellControllerDelegate {
     func didCancelImageRequest()
 }
 
-
 public final class MatchCell: UICollectionViewCell {
     
     public var onShowHighlight: (() -> Void)?

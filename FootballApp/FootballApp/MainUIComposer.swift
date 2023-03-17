@@ -39,9 +39,7 @@ public final class MainUIComposer {
     
     
     private static func makeMainViewController(title: String, viewModel: DisplayViewModel) -> MainViewController {
-        let vc = MainViewController(viewModel: viewModel)
-        vc.title = title
-        return vc
+        MainViewController(viewModel: viewModel)
     }
 }
 

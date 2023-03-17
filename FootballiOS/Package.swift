@@ -25,6 +25,6 @@ let package = Package(
             dependencies: []),
         .testTarget(
             name: "FootballiOSTests",
-            dependencies: ["FootballiOS"]),
+            dependencies: ["FootballiOS", "Football"]),
     ]
 )

@@ -34,8 +34,12 @@ public class DisplayViewModel {
     private var cancellables = Set<AnyCancellable>()
     public var onGetData: (() -> Void)?
     public var filterMatch: ((_ teamName: String) -> Void)?
-    public let input = PassthroughSubject<Input, Never>()
+    private let input = PassthroughSubject<Input, Never>()
     private var controllers = [CellController]()
+    
+    public func send(_ input: Input) {
+        self.input.send(input)
+    }
     
     public func transform() -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in

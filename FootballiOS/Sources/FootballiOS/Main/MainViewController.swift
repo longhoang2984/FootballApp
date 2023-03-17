@@ -53,10 +53,10 @@ public final class MainViewController: UICollectionViewController, UICollectionV
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
-        bind()
+        self.title = "Matches"
         setUpFilter()
         configureCollectionView()
+        bind()
         refresh()
     }
     
@@ -85,7 +85,7 @@ public final class MainViewController: UICollectionViewController, UICollectionV
     }
     
     @objc private func refresh() {
-        viewModel.input.send(.getDatas)
+        viewModel.send(.getDatas)
     }
     
     @objc private func filterTeamName() {
@@ -93,10 +93,10 @@ public final class MainViewController: UICollectionViewController, UICollectionV
         let name = self.teamNames[self.teamPickerView.selectedRow(inComponent: 0)]
         self.selectedTeamName = name
         self.filterField.text = name
-        self.viewModel.input.send(.filterMatches(teamName: name))
+        self.viewModel.send(.filterMatches(teamName: name))
     }
     
-    private func bind() {
+    public func bind() {
         let output = viewModel.transform()
         output
             .receive(on: DispatchQueue.main)
@@ -109,11 +109,19 @@ public final class MainViewController: UICollectionViewController, UICollectionV
                     loading ? self?.refreshControl.beginRefreshing() : self?.refreshControl.endRefreshing()
                 case let .displayControllers(controllers):
                     self?.display(controllers)
-                case let .displayError(error): break
+                case let .displayError(error):
+                    self?.showErrorAlert(error: error)
                 default: break
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func showErrorAlert(error: Error) {
+        let vc = UIAlertController(title: "Oops!", message: error.localizedDescription, preferredStyle: .alert)
+        let okBtn = UIAlertAction(title: "OK", style: .cancel)
+        vc.addAction(okBtn)
+        present(vc, animated: true)
     }
     
     func display(_ sections: [CellController]...) {

@@ -33,7 +33,7 @@ final class LoadResourcePresentationAdapter {
     func loadResource() {
         guard !isLoading else { return }
         
-        viewModel.input.send(.showLoading(true))
+        viewModel.send(.showLoading(true))
         isLoading = true
         
         cancellable = teamLoader()
@@ -51,8 +51,8 @@ final class LoadResourcePresentationAdapter {
                             self?.handleError(completion: completion)
                         }, receiveValue: { [weak self] matches in
                             self?.isLoading = false
-                            self?.viewModel.input.send(.showLoading(false))
-                            self?.viewModel.input.send(.showTeams(teams))
+                            self?.viewModel.send(.showLoading(false))
+                            self?.viewModel.send(.showTeams(teams))
                             self?.matches = matches
                             self?.teams = teams
                             self?.adapter.handleSuccessData(teams: teams, matches: matches)
@@ -69,12 +69,12 @@ final class LoadResourcePresentationAdapter {
     }
     
     private func handleError(completion: Subscribers.Completion<Publishers.HandleEvents<AnyPublisher<Any, Error>>.Failure>) {
-        viewModel.input.send(.showLoading(false))
+        viewModel.send(.showLoading(false))
         switch completion {
         case .finished: break
             
         case let .failure(error):
-            viewModel.input.send(.showError(error))
+            viewModel.send(.showError(error))
         }
         
         isLoading = false
