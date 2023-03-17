@@ -19,18 +19,21 @@ public protocol MatchCellControllerDelegate {
 public final class MatchCell: UICollectionViewCell {
     
     public var onShowHighlight: (() -> Void)?
+    public var selection: ((_ isHome: Bool) -> Void)?
     
     private(set) public lazy var homeLogoImageView: UIImageView = {
         let imgView = UIImageView()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.contentMode = .scaleAspectFit
         imgView.clipsToBounds = true
+        imgView.isUserInteractionEnabled = true
         return imgView
     }()
     
     private(set) public lazy var homeNameLabel: UILabel = {
         let lb = UILabel()
         lb.translatesAutoresizingMaskIntoConstraints = false
+        lb.isUserInteractionEnabled = true
         return lb
     }()
     
@@ -39,12 +42,14 @@ public final class MatchCell: UICollectionViewCell {
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.contentMode = .scaleAspectFit
         imgView.clipsToBounds = true
+        imgView.isUserInteractionEnabled = true
         return imgView
     }()
     
     private(set) public lazy var awayNameLabel: UILabel = {
         let lb = UILabel()
         lb.translatesAutoresizingMaskIntoConstraints = false
+        lb.isUserInteractionEnabled = true
         return lb
     }()
     
@@ -72,6 +77,26 @@ public final class MatchCell: UICollectionViewCell {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.addTarget(self, action: #selector(onHighlightAction), for: .touchUpInside)
         return btn
+    }()
+    
+    private(set) public lazy var homeWinnerImageView: UIImageView = {
+        let imgView = UIImageView()
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        imgView.contentMode = .scaleAspectFit
+        imgView.clipsToBounds = true
+        imgView.image = UIImage(systemName: "trophy.fill")?.withRenderingMode(.alwaysTemplate)
+        imgView.tintColor = .yellow
+        return imgView
+    }()
+   
+    private(set) public lazy var awayWinnerImageView: UIImageView = {
+        let imgView = UIImageView()
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        imgView.contentMode = .scaleAspectFit
+        imgView.clipsToBounds = true
+        imgView.image = UIImage(systemName: "trophy.fill")?.withRenderingMode(.alwaysTemplate)
+        imgView.tintColor = .yellow
+        return imgView
     }()
     
     public override init(frame: CGRect) {
@@ -106,6 +131,9 @@ public final class MatchCell: UICollectionViewCell {
         horLineView.translatesAutoresizingMaskIntoConstraints = false
         horLineView.backgroundColor = .lightGray
         contentView.addSubview(horLineView)
+        
+        contentView.addSubview(homeWinnerImageView)
+        contentView.addSubview(awayWinnerImageView)
         
         NSLayoutConstraint.activate([
             homeLogoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
@@ -150,18 +178,46 @@ public final class MatchCell: UICollectionViewCell {
             contentView.trailingAnchor.constraint(equalTo: horLineView.trailingAnchor, constant: 12),
             horLineView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             horLineView.heightAnchor.constraint(equalToConstant: 1),
+            
+            lineView.leadingAnchor.constraint(greaterThanOrEqualTo: homeNameLabel.trailingAnchor, constant: 8),
+            
+            homeWinnerImageView.centerYAnchor.constraint(equalTo: homeLogoImageView.centerYAnchor),
+            lineView.trailingAnchor.constraint(equalTo: homeWinnerImageView.trailingAnchor, constant: 4),
+            
+            awayWinnerImageView.centerYAnchor.constraint(equalTo: awayLogoImageView.centerYAnchor),
+            lineView.trailingAnchor.constraint(equalTo: awayWinnerImageView.trailingAnchor, constant: 4),
         ])
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(selectHomeTeam))
+        homeNameLabel.addGestureRecognizer(gesture)
+        
+        let homeImgGesture = UITapGestureRecognizer(target: self, action: #selector(selectHomeTeam))
+        homeLogoImageView.addGestureRecognizer(homeImgGesture)
+        
+        let awayGesture = UITapGestureRecognizer(target: self, action: #selector(selectAwayTeam))
+        awayNameLabel.addGestureRecognizer(awayGesture)
+        
+        let awayImgGesture = UITapGestureRecognizer(target: self, action: #selector(selectHomeTeam))
+        awayLogoImageView.addGestureRecognizer(awayImgGesture)
     }
     
     @objc func onHighlightAction() {
         onShowHighlight?()
+    }
+    
+    @objc func selectHomeTeam() {
+        selection?(true)
+    }
+    
+    @objc func selectAwayTeam() {
+        selection?(false)
     }
 }
 
 public final class MatchCellController: NSObject {
     public typealias ResourceViewModel = UIImage
     private let model: DisplayModel
-    private let selection: () -> Void
+    private let selection: (_ team: String, _ image: UIImage?) -> Void
     private let onShowHighlight: () -> Void
     private var cell: MatchCell?
     private let homeDelegate: MatchCellControllerDelegate
@@ -172,7 +228,7 @@ public final class MatchCellController: NSObject {
     public init(model: DisplayModel,
                 homeDelegate: MatchCellControllerDelegate,
                 awayDelegate: MatchCellControllerDelegate,
-                selection: @escaping () -> Void,
+                selection: @escaping (_ team: String, _ image: UIImage?) -> Void,
                 onShowHighlight: @escaping () -> Void) {
         self.model = model
         self.homeDelegate = homeDelegate
@@ -217,14 +273,23 @@ extension MatchCellController: UICollectionViewDataSource, UICollectionViewDeleg
         cell = collectionView.dequeueReusableCell(indexPath)
         cell?.homeNameLabel.text = model.home
         cell?.homeLogoImageView.image = nil
-        
         cell?.awayLogoImageView.image = nil
         cell?.awayNameLabel.text = model.away
         cell?.dateLabel.text = model.date
         cell?.timeLabel.text = model.time
         cell?.highlightButton.isHidden = model.highlights == nil
+        cell?.awayWinnerImageView.isHidden = model.winner != model.away
+        cell?.homeWinnerImageView.isHidden = model.winner != model.home
+        
         didRequestImage()
         cell?.onShowHighlight = onShowHighlight
+        cell?.selection = { [weak self] isHome in
+            guard let self = self else { return }
+            let img = isHome ? self.cell?.homeLogoImageView.image : self.cell?.awayLogoImageView.image
+            let name = isHome ? self.model.home : self.model.away
+            self.selection(name, img)
+        }
+        
         return cell!
     }
     

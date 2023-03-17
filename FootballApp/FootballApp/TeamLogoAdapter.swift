@@ -96,7 +96,9 @@ final class TeamLogoAdapter {
             let view = MatchCellController(model: displayModel,
                                            homeDelegate: homeAdapter,
                                            awayDelegate: awayAdapter,
-                                           selection: {  },
+                                           selection: { [weak self] team, img in
+                self?.showTeamDetail(teamName: team, img: img)
+            },
                                            onShowHighlight: { [weak self] in
                 self?.playHighlight(url: match.highlights)
             })
@@ -120,6 +122,11 @@ final class TeamLogoAdapter {
         controller?.present(playerViewController, animated: true) {
             playerViewController.player!.play()
         }
+    }
+    
+    private func showTeamDetail(teamName: String, img: UIImage?) {
+        let detailVC = TeamDetailViewController(team: teamName, image: img)
+        controller?.navigationController?.pushViewController(detailVC, animated: true)
     }
 }
 
