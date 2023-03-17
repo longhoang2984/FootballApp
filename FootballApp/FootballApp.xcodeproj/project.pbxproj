@@ -15,6 +15,12 @@
 		2F4EC1CC29C08EB500B365AD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F4EC1CA29C08EB500B365AD /* LaunchScreen.storyboard */; };
 		2F4EC1D729C08EB500B365AD /* FootballAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4EC1D629C08EB500B365AD /* FootballAppTests.swift */; };
 		2F4EC1F829C0962B00B365AD /* Football in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4EC1F729C0962B00B365AD /* Football */; };
+		2F6AF9A729C325F5001A7219 /* FootballiOS in Frameworks */ = {isa = PBXBuildFile; productRef = 2F6AF9A629C325F5001A7219 /* FootballiOS */; };
+		2F6AF9A929C3267A001A7219 /* MainUIComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9A829C32679001A7219 /* MainUIComposer.swift */; };
+		2F6AF9AB29C326B3001A7219 /* CombineHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9AA29C326B3001A7219 /* CombineHelpers.swift */; };
+		2F6AF9AD29C327BE001A7219 /* NullStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9AC29C327BE001A7219 /* NullStore.swift */; };
+		2F6AF9AF29C32F3D001A7219 /* LoadResourcePresentationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9AE29C32F3D001A7219 /* LoadResourcePresentationAdapter.swift */; };
+		2F6AF9B129C3377C001A7219 /* TeamLogoAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9B029C3377C001A7219 /* TeamLogoAdapter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +46,11 @@
 		2F4EC1D629C08EB500B365AD /* FootballAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootballAppTests.swift; sourceTree = "<group>"; };
 		2F4EC1F529C0939500B365AD /* Football */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Football; path = ../Football; sourceTree = "<group>"; };
 		2F6AF9A529C0E6EA001A7219 /* FootballiOS */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FootballiOS; path = ../FootballiOS; sourceTree = "<group>"; };
+		2F6AF9A829C32679001A7219 /* MainUIComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainUIComposer.swift; sourceTree = "<group>"; };
+		2F6AF9AA29C326B3001A7219 /* CombineHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineHelpers.swift; sourceTree = "<group>"; };
+		2F6AF9AC29C327BE001A7219 /* NullStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullStore.swift; sourceTree = "<group>"; };
+		2F6AF9AE29C32F3D001A7219 /* LoadResourcePresentationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadResourcePresentationAdapter.swift; sourceTree = "<group>"; };
+		2F6AF9B029C3377C001A7219 /* TeamLogoAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamLogoAdapter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +59,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F4EC1F829C0962B00B365AD /* Football in Frameworks */,
+				2F6AF9A729C325F5001A7219 /* FootballiOS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,6 +104,11 @@
 				2F4EC1C829C08EB500B365AD /* Assets.xcassets */,
 				2F4EC1CA29C08EB500B365AD /* LaunchScreen.storyboard */,
 				2F4EC1CD29C08EB500B365AD /* Info.plist */,
+				2F6AF9A829C32679001A7219 /* MainUIComposer.swift */,
+				2F6AF9AA29C326B3001A7219 /* CombineHelpers.swift */,
+				2F6AF9AC29C327BE001A7219 /* NullStore.swift */,
+				2F6AF9AE29C32F3D001A7219 /* LoadResourcePresentationAdapter.swift */,
+				2F6AF9B029C3377C001A7219 /* TeamLogoAdapter.swift */,
 			);
 			path = FootballApp;
 			sourceTree = "<group>";
@@ -129,6 +146,7 @@
 			name = FootballApp;
 			packageProductDependencies = (
 				2F4EC1F729C0962B00B365AD /* Football */,
+				2F6AF9A629C325F5001A7219 /* FootballiOS */,
 			);
 			productName = FootballApp;
 			productReference = 2F4EC1B929C08EB400B365AD /* FootballApp.app */;
@@ -215,8 +233,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F6AF9AD29C327BE001A7219 /* NullStore.swift in Sources */,
+				2F6AF9B129C3377C001A7219 /* TeamLogoAdapter.swift in Sources */,
 				2F4EC1C129C08EB400B365AD /* ViewController.swift in Sources */,
+				2F6AF9AF29C32F3D001A7219 /* LoadResourcePresentationAdapter.swift in Sources */,
 				2F4EC1BD29C08EB400B365AD /* AppDelegate.swift in Sources */,
+				2F6AF9A929C3267A001A7219 /* MainUIComposer.swift in Sources */,
+				2F6AF9AB29C326B3001A7219 /* CombineHelpers.swift in Sources */,
 				2F4EC1BF29C08EB400B365AD /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -517,6 +540,10 @@
 		2F4EC1F729C0962B00B365AD /* Football */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Football;
+		};
+		2F6AF9A629C325F5001A7219 /* FootballiOS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FootballiOS;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

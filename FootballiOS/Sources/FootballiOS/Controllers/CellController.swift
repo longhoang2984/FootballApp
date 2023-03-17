@@ -13,12 +13,14 @@ public struct CellController {
     let dataSource: UICollectionViewDataSource
     let delegate: UICollectionViewDelegate?
     let dataSourcePrefetching: UICollectionViewDataSourcePrefetching?
+    let flowLayoutDelegate: UICollectionViewDelegateFlowLayout?
     
     public init(id: AnyHashable, _ dataSource: UICollectionViewDataSource) {
         self.id = id
         self.dataSource = dataSource
         self.delegate = dataSource as? UICollectionViewDelegate
         self.dataSourcePrefetching = dataSource as? UICollectionViewDataSourcePrefetching
+        self.flowLayoutDelegate = dataSource as? UICollectionViewDelegateFlowLayout
     }
 }
 

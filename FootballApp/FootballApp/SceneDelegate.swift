@@ -6,50 +6,140 @@
 //
 
 import UIKit
+import Football
+import FootballiOS
+import CoreData
+import Combine
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-
+    private let viewModel = DisplayViewModel()
+    
+    private lazy var httpClient: HTTPClient = {
+        URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
+    }()
+    
+    private lazy var teamStore: TeamStore & TeamLogoDataStore = {
+        do {
+            return try CoreDataTeamStore(
+                storeURL: NSPersistentContainer
+                    .defaultDirectoryURL()
+                    .appendingPathComponent("team-store.sqlite"))
+        } catch {
+            assertionFailure("Failed to instantiate CoreData store with error: \(error.localizedDescription)")
+            return NullStore()
+        }
+    }()
+    
+    private lazy var matchStore: MatchStore = {
+        do {
+            return try CoreDataMatchStore(
+                storeURL: NSPersistentContainer
+                    .defaultDirectoryURL()
+                    .appendingPathComponent("match-store.sqlite"))
+        } catch {
+            assertionFailure("Failed to instantiate CoreData store with error: \(error.localizedDescription)")
+            return NullStore()
+        }
+    }()
+    
+    private lazy var localTeamLoader: LocalTeamLoader = {
+        LocalTeamLoader(store: teamStore)
+    }()
+    
+    private lazy var localMatchLoader: LocalMatchLoader = {
+        LocalMatchLoader(store: matchStore)
+    }()
+    
+    private lazy var baseURL = URL(string: "https://jmde6xvjr4.execute-api.us-east-1.amazonaws.com")!
+    
+    private lazy var scheduler: AnyDispatchQueueScheduler = DispatchQueue(
+        label: "com.hoangcuulong.infra.queue",
+        qos: .userInitiated,
+        attributes: .concurrent
+    ).eraseToAnyScheduler()
+    
+    
+    private lazy var navigationController = UINavigationController(
+        rootViewController: MainUIComposer.mainComposedWith(viewModel: viewModel,
+                                                            teamLoader: makeRemoteTeamLoaderWithLocalFallback,
+                                                            matchLoader: makeRemoteMatchLoaderWithLocalFallback,
+                                                            imageLoader: makeLocalImageLoaderWithRemoteFallback,
+                                                            awayImageLoader: makeLocalImageLoaderWithRemoteFallback))
+    
+    convenience init(httpClient: HTTPClient,
+                     teamStore: TeamStore & TeamLogoDataStore,
+                     matchStore: MatchStore,
+                     scheduler: AnyDispatchQueueScheduler) {
+        self.init()
+        self.httpClient = httpClient
+        self.teamStore = teamStore
+        self.matchStore = matchStore
+        self.scheduler = scheduler
+    }
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        window = UIWindow(windowScene: windowScene)
+        setUpWindow()
+    }
+    
+    func setUpWindow() {
+        navigationController.setNavigationBarHidden(false, animated: false)
+        window?.rootViewController = navigationController
+        window?.makeKeyAndVisible()
     }
 
-    func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
+    private func makeRemoteTeamLoaderWithLocalFallback() -> AnyPublisher<[Team], Error> {
+        makeRemoteTeamLoader()
+            .caching(to: localTeamLoader)
+            .fallback(to: localTeamLoader.loadPublisher)
+            .subscribe(on: scheduler)
+            .eraseToAnyPublisher()
     }
-
-    func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+    
+    private func makeRemoteTeamLoader() -> AnyPublisher<[Team], Error> {
+        let url = TeamEndpoint.get.url(baseURL: baseURL)
+        
+        return httpClient
+            .getPublisher(url: url)
+            .tryMap(TeamMapper.map)
+            .eraseToAnyPublisher()
     }
-
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
+    
+    private func makeRemoteMatchLoaderWithLocalFallback() -> AnyPublisher<[Match], Error> {
+        makeRemoteMatchLoader()
+            .caching(to: localMatchLoader)
+            .fallback(to: localMatchLoader.loadPublisher)
+            .subscribe(on: scheduler)
+            .eraseToAnyPublisher()
     }
-
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
+    
+    private func makeRemoteMatchLoader() -> AnyPublisher<[Match], Error> {
+        let url = MatchEndpoint.get.url(baseURL: baseURL)
+        
+        return httpClient
+            .getPublisher(url: url)
+            .tryMap(MatchMapper.map)
+            .eraseToAnyPublisher()
     }
-
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
-
-        // Save changes in the application's managed object context when the application transitions to the background.
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+    
+    private func makeLocalImageLoaderWithRemoteFallback(url: URL) -> LocalTeamLogoDataLoader.Publisher {
+        let localImageLoader = LocalTeamLogoDataLoader(store: teamStore)
+        
+        return localImageLoader
+            .loadImageDataPublisher(from: url)
+            .fallback(to: { [httpClient, scheduler] in
+                return httpClient
+                    .getPublisher(url: url)
+                    .tryMap(TeamLogoDataMapper.map)
+                    .caching(to: localImageLoader, using: url)
+                    .subscribe(on: scheduler)
+                    .eraseToAnyPublisher()
+            })
+            .subscribe(on: scheduler)
+            .eraseToAnyPublisher()
     }
-
-
 }
 

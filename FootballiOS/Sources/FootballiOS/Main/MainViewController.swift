@@ -9,14 +9,13 @@ import UIKit
 import Football
 import Combine
 
-public final class MainViewController: UIViewController, UICollectionViewDataSourcePrefetching {
-    private var viewModel: AppViewModel
-    private let input = PassthroughSubject<AppViewModel.Input, Never>()
+public final class MainViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching {
+    private var viewModel: DisplayViewModel
     private var cancellables = Set<AnyCancellable>()
     
-    init(viewModel: AppViewModel) {
+    public init(viewModel: DisplayViewModel) {
         self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
+        super.init(collectionViewLayout: UICollectionViewFlowLayout())
     }
     
     required init?(coder: NSCoder) {
@@ -24,12 +23,7 @@ public final class MainViewController: UIViewController, UICollectionViewDataSou
     }
     
     private let refreshControl = UIRefreshControl()
-    private lazy var collectionView: UICollectionView = {
-        let fLayout = UICollectionViewFlowLayout()
-        let view = UICollectionView(frame: .zero, collectionViewLayout: fLayout)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    public var onGetData: (() -> Void)?
     
     private lazy var teamPickerView: UIPickerView = {
         let view = UIPickerView()
@@ -40,10 +34,13 @@ public final class MainViewController: UIViewController, UICollectionViewDataSou
     
     private var selectedTeamName = "All"
     private var teamNames = ["All"]
-    private lazy var filterButton: UIButton = {
-        let btn = UIButton(type: .custom)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        return btn
+    private lazy var filterField: UITextField = {
+        let field = UITextField()
+        field.translatesAutoresizingMaskIntoConstraints = false
+        field.borderStyle = .roundedRect
+        field.text = selectedTeamName
+        field.inputView = teamPickerView
+        return field
     }()
     
     private lazy var dataSource: UICollectionViewDiffableDataSource<Int, CellController> = {
@@ -56,49 +53,124 @@ public final class MainViewController: UIViewController, UICollectionViewDataSou
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setUpFilter()
-        refresh()
+        view.backgroundColor = .red
         bind()
+        setUpFilter()
+        configureCollectionView()
+        refresh()
     }
     
     private func setUpFilter() {
+        view.addSubview(filterField)
+        NSLayoutConstraint.activate([
+            filterField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            filterField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            view.trailingAnchor.constraint(equalTo: filterField.trailingAnchor, constant: 8)
+        ])
         
+        let toolBar = UIToolbar()
+        toolBar.sizeToFit()
+        
+        let filterButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(filterTeamName))
+        toolBar.setItems([filterButton], animated: true)
+        filterField.inputAccessoryView = toolBar
     }
     
     private func configureCollectionView() {
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        collectionView.register(MatchCell.self, forCellWithReuseIdentifier: String(describing: MatchCell.self))
         collectionView.refreshControl = refreshControl
         collectionView.dataSource = dataSource
-        collectionView.register(ErrorView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: ErrorView.self))
     }
     
     @objc private func refresh() {
-        onRefresh?()
+        viewModel.input.send(.getDatas)
+    }
+    
+    @objc private func filterTeamName() {
+        filterField.resignFirstResponder()
+        let name = self.teamNames[self.teamPickerView.selectedRow(inComponent: 0)]
+        self.selectedTeamName = name
+        self.filterField.text = name
+        self.viewModel.input.send(.filterMatches(teamName: name))
     }
     
     private func bind() {
-        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        let output = viewModel.transform()
         output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] ev in
                 switch ev {
-                case let .getDataSuccess(teams, _):
-                    let names = teams.map({ $0.name })
-                    self?.teamNames += names
+                case let .displayTeamNames(teamNames):
+                    self?.teamNames += teamNames
+                    break
+                case let .displayLoading(loading):
+                    loading ? self?.refreshControl.beginRefreshing() : self?.refreshControl.endRefreshing()
+                case let .displayControllers(controllers):
+                    self?.display(controllers)
+                case let .displayError(error): break
                 default: break
                 }
             }
             .store(in: &cancellables)
     }
     
-    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+    func display(_ sections: [CellController]...) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, CellController>()
+        sections.enumerated().forEach { section, cellControllers in
+            snapshot.appendSections([section])
+            snapshot.appendItems(cellControllers, toSection: section)
+        }
         
+        if #available(iOS 15.0, *) {
+            dataSource.applySnapshotUsingReloadData(snapshot)
+        } else {
+            dataSource.apply(snapshot)
+        }
     }
     
+    public override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let dl = cellController(at: indexPath)?.delegate
+        dl?.collectionView?(collectionView, didSelectItemAt: indexPath)
+    }
+    
+    public override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let dl = cellController(at: indexPath)?.delegate
+        dl?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
+    }
+    
+    public override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let dl = cellController(at: indexPath)?.delegate
+        dl?.collectionView?(collectionView, didEndDisplaying: cell, forItemAt: indexPath)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        indexPaths.forEach { indexPath in
+            let dsp = cellController(at: indexPath)?.dataSourcePrefetching
+            dsp?.collectionView(collectionView, prefetchItemsAt: [indexPath])
+        }
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        indexPaths.forEach { indexPath in
+            let dsp = cellController(at: indexPath)?.dataSourcePrefetching
+            dsp?.collectionView?(collectionView, cancelPrefetchingForItemsAt: [indexPath])
+        }
+    }
+    
+    private func cellController(at indexPath: IndexPath) -> CellController? {
+        dataSource.itemIdentifier(for: indexPath)
+    }
 }
 
-extension MainViewController: UIPickerViewDataSource {
+extension MainViewController: UICollectionViewDelegateFlowLayout {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let dl = cellController(at: indexPath)?.flowLayoutDelegate
+        return dl?.collectionView?(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath) ?? .zero
+    }
+}
+
+extension MainViewController: UIPickerViewDataSource, UIPickerViewDelegate {
     public func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -111,10 +183,4 @@ extension MainViewController: UIPickerViewDataSource {
         return teamNames[row]
     }
     
-}
-
-extension MainViewController: UIPickerViewDelegate {
-    public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let name = teamNames[row]
-    }
 }

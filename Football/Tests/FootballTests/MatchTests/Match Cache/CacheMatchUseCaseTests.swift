@@ -1,5 +1,5 @@
 //
-//  CacheTeamUseCaseTests.swift
+//  CacheMatchUseCaseTests.swift
 //  
 //
 //  Created by Cửu Long Hoàng on 15/03/2023.
@@ -8,7 +8,7 @@
 import XCTest
 import Football
 
-final class CacheTeamUseCaseTests: XCTestCase {
+final class CacheMatchUseCaseTests: XCTestCase {
 
     func test_init_doesNotMessageStoreUponCreation() {
         let (_, store) = makeSUT()
@@ -21,19 +21,19 @@ final class CacheTeamUseCaseTests: XCTestCase {
         let deletionError = anyNSError()
         store.completeDeletion(with: deletionError)
         
-        try? sut.save(uniqueTeams().models)
+        try? sut.save(uniqueMatches().models)
         
-        XCTAssertEqual(store.receivedMessages, [.deleteCachedTeam])
+        XCTAssertEqual(store.receivedMessages, [.deleteCachedMatch])
     }
     
     func test_save_requestsNewCacheInsertionWithTimestampOnSuccessfulDeletion() {
-        let teams = uniqueTeams()
+        let matches = uniqueMatches()
         let (sut, store) = makeSUT()
         store.completeDeletionSuccessfully()
         
-        try? sut.save(teams.models)
+        try? sut.save(matches.models)
         
-        XCTAssertEqual(store.receivedMessages, [.deleteCachedTeam, .insert(teams.local)])
+        XCTAssertEqual(store.receivedMessages, [.deleteCachedMatch, .insert(matches.local)])
     }
     
     func test_save_failsOnDeletionError() {
@@ -66,19 +66,19 @@ final class CacheTeamUseCaseTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalTeamLoader, store: TeamStoreSpy) {
-        let store = TeamStoreSpy()
-        let sut = LocalTeamLoader(store: store)
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalMatchLoader, store: MatchStoreSpy) {
+        let store = MatchStoreSpy()
+        let sut = LocalMatchLoader(store: store)
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
     }
     
-    private func expect(_ sut: LocalTeamLoader, toCompleteWithError expectedError: NSError?, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(_ sut: LocalMatchLoader, toCompleteWithError expectedError: NSError?, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
         action()
         
         do {
-            try sut.save(uniqueTeams().models)
+            try sut.save(uniqueMatches().models)
         } catch {
             XCTAssertEqual(error as NSError?, expectedError, file: file, line: line)
         }
