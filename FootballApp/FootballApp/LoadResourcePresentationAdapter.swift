@@ -17,6 +17,8 @@ final class LoadResourcePresentationAdapter {
     private let viewModel: DisplayViewModel
     private var cancellables = Set<AnyCancellable>()
     private let adapter: TeamLogoAdapter
+    private var matches: [Match] = []
+    private var teams: [Team] = []
     
     init(viewModel: DisplayViewModel,
          teamLoader: @escaping () -> AnyPublisher<[Team], Error>,
@@ -51,9 +53,19 @@ final class LoadResourcePresentationAdapter {
                             self?.isLoading = false
                             self?.viewModel.input.send(.showLoading(false))
                             self?.viewModel.input.send(.showTeams(teams))
+                            self?.matches = matches
+                            self?.teams = teams
                             self?.adapter.handleSuccessData(teams: teams, matches: matches)
                         })
                 })
+    }
+    
+    func filterMatchWithTeamName(teamName: String) {
+        var matches = self.matches
+        if teamName != "All" {
+            matches = self.matches.filter({ $0.home == teamName || $0.away == teamName })
+        }
+        adapter.handleSuccessData(teams: teams, matches: matches)
     }
     
     private func handleError(completion: Subscribers.Completion<Publishers.HandleEvents<AnyPublisher<Any, Error>>.Failure>) {

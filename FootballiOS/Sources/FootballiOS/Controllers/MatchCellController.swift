@@ -228,10 +228,6 @@ extension MatchCellController: UICollectionViewDataSource, UICollectionViewDeleg
         return cell!
     }
     
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        selection()
-    }
-    
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         self.cell = cell as? MatchCell
         didRequestImage()

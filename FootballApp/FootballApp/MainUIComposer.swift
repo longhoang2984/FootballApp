@@ -31,6 +31,7 @@ public final class MainUIComposer {
                                                       adapter: logoAdapter)
         
         viewModel.onGetData = adapter.loadResource
+        viewModel.filterMatch = adapter.filterMatchWithTeamName
         
         return mainVC
     }
