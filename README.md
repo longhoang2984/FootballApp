@@ -25,3 +25,8 @@ Device | 14 Pro
 1. UI Tests, Integration Tests
 2. MVVM Coordinator Route.
 3. Correct way to present team detail.
+
+#### How to build
+1. Switch to `Football` scheme and run `CMD+B`
+2. Switch to `FootballiOS` scheme and run `CMD+B`
+3. Switch to `FootballApp` and run `CMD+R`
