@@ -20,6 +20,14 @@ final class MatchesSnapshotTests: XCTestCase {
         assert(snapshot: sut.snapshot(for: .iPhone13(style: .dark)), named: "EMPTY_LIST_dark")
     }
     
+    func test_loadingView() {
+        let (sut, _) = makeSUT()
+        sut.startLoading()
+
+        assert(snapshot: sut.snapshot(for: .iPhone13(style: .light)), named: "LOADING_light")
+        assert(snapshot: sut.snapshot(for: .iPhone13(style: .dark)), named: "LOADING_dark")
+    }
+    
     func test_matchList_withEmptyImage() {
         let (sut, _) = makeSUT()
         
@@ -83,6 +91,7 @@ final class MatchesSnapshotTests: XCTestCase {
             uniquePreviousMatch(),
             uniqueUpcomingMatch(),
         ]
+        
         var previous = [CellController]()
         var upcoming = [CellController]()
         matches.forEach { match in
