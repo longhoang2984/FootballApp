@@ -19,6 +19,7 @@
 		2F6AF9AD29C327BE001A7219 /* NullStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9AC29C327BE001A7219 /* NullStore.swift */; };
 		2F6AF9AF29C32F3D001A7219 /* LoadResourcePresentationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9AE29C32F3D001A7219 /* LoadResourcePresentationAdapter.swift */; };
 		2F6AF9B129C3377C001A7219 /* TeamLogoAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9B029C3377C001A7219 /* TeamLogoAdapter.swift */; };
+		2FE7831B29D7695300A893E3 /* DetailUIComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE7831A29D7695300A893E3 /* DetailUIComposer.swift */; };
 		C626A38629CDBFBA007FA59B /* FootballiOS in Frameworks */ = {isa = PBXBuildFile; productRef = C626A38529CDBFBA007FA59B /* FootballiOS */; };
 		C626A38829CDBFC4007FA59B /* Football in Frameworks */ = {isa = PBXBuildFile; productRef = C626A38729CDBFC4007FA59B /* Football */; };
 /* End PBXBuildFile section */
@@ -51,6 +52,7 @@
 		2F6AF9AC29C327BE001A7219 /* NullStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullStore.swift; sourceTree = "<group>"; };
 		2F6AF9AE29C32F3D001A7219 /* LoadResourcePresentationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadResourcePresentationAdapter.swift; sourceTree = "<group>"; };
 		2F6AF9B029C3377C001A7219 /* TeamLogoAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamLogoAdapter.swift; sourceTree = "<group>"; };
+		2FE7831A29D7695300A893E3 /* DetailUIComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailUIComposer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 				2F6AF9AC29C327BE001A7219 /* NullStore.swift */,
 				2F6AF9AE29C32F3D001A7219 /* LoadResourcePresentationAdapter.swift */,
 				2F6AF9B029C3377C001A7219 /* TeamLogoAdapter.swift */,
+				2FE7831A29D7695300A893E3 /* DetailUIComposer.swift */,
 			);
 			path = FootballApp;
 			sourceTree = "<group>";
@@ -233,6 +236,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FE7831B29D7695300A893E3 /* DetailUIComposer.swift in Sources */,
 				2F6AF9AD29C327BE001A7219 /* NullStore.swift in Sources */,
 				2F6AF9B129C3377C001A7219 /* TeamLogoAdapter.swift in Sources */,
 				2F4EC1C129C08EB400B365AD /* ViewController.swift in Sources */,

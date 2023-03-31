@@ -21,19 +21,22 @@ final class LoadResourcePresentationAdapter {
     private let onLoading: (Bool) -> Void
     private let onError: (Error) -> Void
     private let onShowTeams: ([Team]) -> Void
+    private let onShowData: ([Team], [Match]) -> Void
     
     init(teamLoader: @escaping () -> AnyPublisher<[Team], Error>,
          matchLoader: @escaping () -> AnyPublisher<[Match], Error>,
          adapter: TeamLogoAdapter,
          onLoading: @escaping (Bool) -> Void,
          onError: @escaping (Error) -> Void,
-         onShowTeams: @escaping ([Team]) -> Void) {
+         onShowTeams: @escaping ([Team]) -> Void = { _ in },
+         onShowData: @escaping ([Team], [Match]) -> Void = { _, _ in }) {
         self.matchLoader = matchLoader
         self.teamLoader = teamLoader
         self.adapter = adapter
         self.onLoading = onLoading
         self.onError = onError
         self.onShowTeams = onShowTeams
+        self.onShowData = onShowData
     }
     
     func loadResource() {
@@ -61,9 +64,13 @@ final class LoadResourcePresentationAdapter {
                             self?.onShowTeams(teams)
                             self?.matches = matches
                             self?.teams = teams
-                            self?.adapter.handleSuccessData(teams: teams, matches: matches)
+                            self?.handleSuccessData(teams: teams, matches: matches)
                         })
                 })
+    }
+    
+    func handleSuccessData(teams: [Team], matches: [Match]) {
+        onShowData(teams, matches)
     }
     
     func filterMatchWithTeamName(teamName: String) {
@@ -71,7 +78,7 @@ final class LoadResourcePresentationAdapter {
         if teamName != "All" {
             matches = self.matches.filter({ $0.home == teamName || $0.away == teamName })
         }
-        adapter.handleSuccessData(teams: teams, matches: matches)
+        handleSuccessData(teams: teams, matches: matches)
     }
     
     private func handleError(completion: Subscribers.Completion<Publishers.HandleEvents<AnyPublisher<Any, Error>>.Failure>) {

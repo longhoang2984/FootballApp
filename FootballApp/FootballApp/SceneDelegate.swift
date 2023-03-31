@@ -12,7 +12,7 @@ import CoreData
 import Combine
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
+    
     var window: UIWindow?
     
     private lazy var httpClient: HTTPClient = {
@@ -64,7 +64,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         rootViewController: MainUIComposer.mainComposedWith(teamLoader: makeRemoteTeamLoaderWithLocalFallback,
                                                             matchLoader: makeRemoteMatchLoaderWithLocalFallback,
                                                             imageLoader: makeLocalImageLoaderWithRemoteFallback,
-                                                            awayImageLoader: makeLocalImageLoaderWithRemoteFallback))
+                                                            awayImageLoader: makeLocalImageLoaderWithRemoteFallback,
+                                                            selection: showDetail))
     
     convenience init(httpClient: HTTPClient,
                      teamStore: TeamStore & TeamLogoDataStore,
@@ -88,12 +89,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
     }
-
+    
+    private func showDetail(team: Team, image: UIImage?) {
+        let vc = DetailUIComposer.detailComposedWith(team: team,
+                                            image: image,
+                                            teamLoader: localTeamLoader.loadPublisher,
+                                            matchLoader: localMatchLoader.loadPublisher,
+                                            imageLoader: makeLocalImageLoaderWithRemoteFallback,
+                                            awayImageLoader: makeLocalImageLoaderWithRemoteFallback,
+                                            selection: showDetail)
+        navigationController.pushViewController(vc, animated: true)
+    }
+    
     private func makeRemoteTeamLoaderWithLocalFallback() -> AnyPublisher<[Team], Error> {
         makeRemoteTeamLoader()
             .caching(to: localTeamLoader)
             .fallback(to: localTeamLoader.loadPublisher)
-            .subscribe(on: scheduler)
             .eraseToAnyPublisher()
     }
     
@@ -110,7 +121,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         makeRemoteMatchLoader()
             .caching(to: localMatchLoader)
             .fallback(to: localMatchLoader.loadPublisher)
-            .subscribe(on: scheduler)
             .eraseToAnyPublisher()
     }
     
@@ -128,15 +138,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         return localImageLoader
             .loadImageDataPublisher(from: url)
-            .fallback(to: { [httpClient, scheduler] in
+            .fallback(to: { [httpClient] in
                 return httpClient
                     .getPublisher(url: url)
                     .tryMap(TeamLogoDataMapper.map)
                     .caching(to: localImageLoader, using: url)
-                    .subscribe(on: scheduler)
                     .eraseToAnyPublisher()
             })
-            .subscribe(on: scheduler)
             .eraseToAnyPublisher()
     }
 }

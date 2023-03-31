@@ -9,13 +9,13 @@ import UIKit
 import Football
 import Combine
 
-public final class TeamDetailViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching {
-    private var viewModel: AppViewModel
+public final class TeamDetailViewController: BaseViewController {
+    private var viewModel: DetailViewModel
     private var cancellables = Set<AnyCancellable>()
     
-    public init(viewModel: AppViewModel) {
+    public init(viewModel: DetailViewModel) {
         self.viewModel = viewModel
-        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+        super.init()
     }
     
     required init?(coder: NSCoder) {
@@ -24,36 +24,75 @@ public final class TeamDetailViewController: UICollectionViewController, UIColle
     
     public var onGetData: (() -> Void)?
     
-    private lazy var dataSource: UICollectionViewDiffableDataSource<Int, CellController> = {
-        .init(collectionView: collectionView) { (collectionView, index, controller) in
-            controller.dataSource.collectionView(collectionView, cellForItemAt: index)
-        }
+    private(set) public lazy var logoImageView: UIImageView = {
+        let imgView = UIImageView()
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        imgView.contentMode = .scaleAspectFit
+        imgView.clipsToBounds = true
+        imgView.isUserInteractionEnabled = true
+        return imgView
     }()
     
-    public var onRefresh: (() -> Void)?
+    private(set) public lazy var previousLabel: UILabel = {
+        let lb = UILabel()
+        lb.translatesAutoresizingMaskIntoConstraints = false
+        lb.isUserInteractionEnabled = true
+        return lb
+    }()
+    
+    private(set) public lazy var upcomingLabel: UILabel = {
+        let lb = UILabel()
+        lb.translatesAutoresizingMaskIntoConstraints = false
+        lb.isUserInteractionEnabled = true
+        return lb
+    }()
     
     public override func viewDidLoad() {
+        setUpLogo()
         super.viewDidLoad()
-        self.title = "Matches"
-        configureCollectionView()
-        bind()
-        getData()
     }
     
-    private func configureCollectionView() {
-        collectionView.register(MatchCell.self, forCellWithReuseIdentifier: String(describing: MatchCell.self))
-        collectionView.dataSource = dataSource
-        collectionView.contentInset.top = 50
+    private func setUpLogo() {
+        view.addSubview(logoImageView)
+        
+        let stackView = UIStackView(arrangedSubviews: [previousLabel, upcomingLabel, UIView()])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.distribution = .equalCentering
+        stackView.spacing = 0
+        
+        view.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            logoImageView.widthAnchor.constraint(equalToConstant: 64),
+            logoImageView.heightAnchor.constraint(equalToConstant: 64),
+            logoImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            
+            stackView.leadingAnchor.constraint(equalTo: logoImageView.trailingAnchor, constant: 8),
+            stackView.heightAnchor.constraint(equalToConstant: 64),
+            view.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 16),
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+        ])
     }
     
-    @objc private func getData() {
+    public override func layoutCollectionView() {
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 8),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+    
+    @objc public override func getData() {
         viewModel.send(.getDatas)
     }
     
-    public func bind() {
+    public override func bind() {
         let output = viewModel.transform()
         output
-            .receive(on: DispatchQueue.main)
+//            .receive(on: DispatchQueue.main)
             .sink { [weak self] ev in
                 guard let self = self else { return }
                 switch ev {
@@ -61,70 +100,15 @@ public final class TeamDetailViewController: UICollectionViewController, UIColle
                     self.display(controllers)
                 case let .displayError(error):
                     self.showErrorAlert(error: error)
+                case let .displaySelectionTeam(team, image):
+                    self.logoImageView.image = image
+                    self.title = team.name
+                case let .displayMatchesInfo(previous, upcoming):
+                    self.previousLabel.text = "Played: \(previous) match(es)"
+                    self.upcomingLabel.text = "Upcoming: \(upcoming) match(es)"
                 default: break
                 }
             }
             .store(in: &cancellables)
-    }
-    
-    private func showErrorAlert(error: Error) {
-        let vc = UIAlertController(title: "Oops!", message: error.localizedDescription, preferredStyle: .alert)
-        let okBtn = UIAlertAction(title: "OK", style: .cancel)
-        vc.addAction(okBtn)
-        present(vc, animated: true)
-    }
-    
-    func display(_ sections: [[CellController]]) {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, CellController>()
-        sections.enumerated().forEach { section, cellControllers in
-            snapshot.appendSections([section])
-            snapshot.appendItems(cellControllers, toSection: section)
-        }
-        
-        if #available(iOS 15.0, *) {
-            dataSource.applySnapshotUsingReloadData(snapshot)
-        } else {
-            dataSource.apply(snapshot)
-        }
-    }
-    
-    public override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let dl = cellController(at: indexPath)?.delegate
-        dl?.collectionView?(collectionView, didSelectItemAt: indexPath)
-    }
-    
-    public override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let dl = cellController(at: indexPath)?.delegate
-        dl?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
-    }
-    
-    public override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let dl = cellController(at: indexPath)?.delegate
-        dl?.collectionView?(collectionView, didEndDisplaying: cell, forItemAt: indexPath)
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach { indexPath in
-            let dsp = cellController(at: indexPath)?.dataSourcePrefetching
-            dsp?.collectionView(collectionView, prefetchItemsAt: [indexPath])
-        }
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach { indexPath in
-            let dsp = cellController(at: indexPath)?.dataSourcePrefetching
-            dsp?.collectionView?(collectionView, cancelPrefetchingForItemsAt: [indexPath])
-        }
-    }
-    
-    private func cellController(at indexPath: IndexPath) -> CellController? {
-        dataSource.itemIdentifier(for: indexPath)
-    }
-}
-
-extension TeamDetailViewController: UICollectionViewDelegateFlowLayout {
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let dl = cellController(at: indexPath)?.flowLayoutDelegate
-        return dl?.collectionView?(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath) ?? .zero
     }
 }

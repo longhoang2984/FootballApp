@@ -10,7 +10,7 @@ import Combine
 import Football
 import UIKit
 
-public class DetailViewModel {
+public class DetailViewModel: ViewModel {
     private let input: PassthroughSubject<Input, Never>
     private let output: PassthroughSubject<Output, Never>
     private let team: Team
@@ -32,6 +32,8 @@ public class DetailViewModel {
         case showError(Error)
         case showControllers(controllers: [[CellController]])
         case showAllData(teams: [Team], matches: [Match])
+        case showSelectionTeam(team: Team, image: UIImage?)
+        case showMatchesInfo(previous: Int, upcoming: Int)
     }
     
     public enum Output {
@@ -40,9 +42,11 @@ public class DetailViewModel {
         case displayError(Error)
         case displayControllers([[CellController]])
         case displayAllData(([Team], [Match]))
+        case displaySelectionTeam(team: Team, image: UIImage?)
+        case displayMatchesInfo(previous: Int, upcoming: Int)
     }
     
-    private var cancellables = Set<AnyCancellable>()
+    public var cancellables = Set<AnyCancellable>()
     public var onGetData: (() -> Void)?
     private var controllers = [CellController]()
     
@@ -64,6 +68,10 @@ public class DetailViewModel {
                 self.output.send(.displayError(error))
             case let .showAllData(teams, matches):
                 self.output.send(.displayAllData((teams, matches)))
+            case let .showSelectionTeam(team, image):
+                self.output.send(.displaySelectionTeam(team: team, image: image))
+            case let .showMatchesInfo(previous, upcoming):
+                self.output.send(.displayMatchesInfo(previous: previous, upcoming: upcoming))
             }
         }
         .store(in: &cancellables)

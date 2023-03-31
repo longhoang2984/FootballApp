@@ -54,23 +54,26 @@ final class TeamLogoAdapter {
     
     private typealias TeamLogoViewModelAdapter = TeamLogoLoaderAdapter<UIImage>
     private var cancellables = Set<AnyCancellable>()
-    private let viewModel: AppViewModel
+    private let viewModel: ViewModel
     private let selection: (_ team: Team, _ image: UIImage?) -> Void
-    init(viewModel: AppViewModel,
-         controller: MainViewController,
+    private let onShowMatchesInfo: (_ previous: Int, _ upcoming: Int) -> Void
+    init(viewModel: ViewModel,
+         controller: UIViewController,
          imageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
          awayImageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
-         selection: @escaping (_ team: Team, _ image: UIImage?) -> Void) {
+         selection: @escaping (_ team: Team, _ image: UIImage?) -> Void,
+         onShowMatchesInfo: @escaping (_ previous: Int, _ upcoming: Int) -> Void = { _, _ in }) {
         self.viewModel = viewModel
         self.imageLoader = imageLoader
         self.awayImageLoader = awayImageLoader
         self.controller = controller
         self.selection = selection
+        self.onShowMatchesInfo = onShowMatchesInfo
     }
     
-    func handleSuccessData(teams: [Team], matches: [Match]) {
-        var previousController = [CellController]()
-        var upcomingController = [CellController]()
+    func handleSuccessData(teams: [Team], matches: [Match]) -> [[CellController]] {
+        var previousControllers = [CellController]()
+        var upcomingControllers = [CellController]()
         matches.forEach { match in
             let home = teams.first(where: { $0.name == match.home })
             let homeAdapter = TeamLogoViewModelAdapter(imageLoader: { [imageLoader] url in
@@ -102,7 +105,9 @@ final class TeamLogoAdapter {
                                            homeDelegate: homeAdapter,
                                            awayDelegate: awayAdapter,
                                            selection: { [weak self] team, img in
-                self?.showTeamDetail(teamName: team, img: img)
+                if let team = teams.first(where: { $0.name == team }) {
+                    self?.selection(team, img)
+                }
             },
                                            onShowHighlight: { [weak self] in
                 self?.playHighlight(url: match.highlights)
@@ -113,13 +118,14 @@ final class TeamLogoAdapter {
             
             let controller = CellController(id: "\(home?.id.uuidString ?? "")\(away?.id.uuidString ?? "")\(date)\(time)", view)
             if match.winner == nil {
-                upcomingController.append(controller)
+                upcomingControllers.append(controller)
             } else {
-                previousController.append(controller)
+                previousControllers.append(controller)
             }
         }
         
-        viewModel.send(.showControllers(controllers: [previousController, upcomingController]))
+        onShowMatchesInfo(previousControllers.count, upcomingControllers.count)
+        return [previousControllers, upcomingControllers]
     }
     
     private func playHighlight(url: URL?) {
@@ -131,12 +137,6 @@ final class TeamLogoAdapter {
         controller?.present(playerViewController, animated: true) {
             playerViewController.player!.play()
         }
-    }
-    
-    private func showTeamDetail(teamName: String, img: UIImage?) {
-        
-//        let detailVC = TeamDetailViewController(team: teamName, image: img)
-//        controller?.navigationController?.pushViewController(detailVC, animated: true)
     }
 }
 

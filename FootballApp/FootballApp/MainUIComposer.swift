@@ -35,7 +35,8 @@ public final class MainUIComposer {
                                                       adapter: logoAdapter,
                                                       onLoading: { input.send(.showLoading($0)) },
                                                       onError: { input.send(.showError($0)) },
-                                                      onShowTeams: { input.send(.showTeams($0)) })
+                                                      onShowTeams: { input.send(.showTeams($0)) },
+                                                      onShowData: { input.send(.showControllers(controllers: logoAdapter.handleSuccessData(teams: $0, matches: $1))) })
         
         viewModel.onGetData = adapter.loadResource
         viewModel.filterMatch = adapter.filterMatchWithTeamName
