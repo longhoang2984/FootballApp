@@ -3,4 +3,150 @@
    uuid = "07C1F1EB-CC41-4EBA-A267-6091C18CA0E2"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "892370EA-B5CD-4C02-89F3-2CC2718722E3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../Football/Sources/Football/Team/Team View Model/TeamLogoViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "transform()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "892370EA-B5CD-4C02-89F3-2CC2718722E3 - ee9d18d1ed7f6e8c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Football.TeamLogoViewModel&lt;&#x3c4;_0_0&gt;.Input) -&gt; () in Football.TeamLogoViewModel.transform() -&gt; Combine.AnyPublisher&lt;Football.TeamLogoViewModel&lt;&#x3c4;_0_0&gt;.Output, Swift.Never&gt;"
+                  moduleName = "FootballApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cuulonghoang/Documents/iOS/FootballApp/Football/Sources/Football/Team/Team%20View%20Model/TeamLogoViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "936">
+               </Location>
+               <Location
+                  uuid = "892370EA-B5CD-4C02-89F3-2CC2718722E3 - ee9d18d1ed7f6e8c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Football.TeamLogoViewModel&lt;&#x3c4;_0_0&gt;.Input) -&gt; () in Football.TeamLogoViewModel.transform() -&gt; Combine.AnyPublisher&lt;Football.TeamLogoViewModel&lt;&#x3c4;_0_0&gt;.Output, Swift.Never&gt;"
+                  moduleName = "FootballApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cuulonghoang/Documents/iOS/FootballApp/Football/Sources/Football/Team/Team%20View%20Model/TeamLogoViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "1096">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E16B17D5-33FF-48C7-893E-2201EF2A5263"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../Football/Sources/Football/Team/Team View Model/TeamLogoViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
+            landmarkName = "transform()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "78A326D8-AFA1-4F77-9309-F1B4E348E4AD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../Football/Sources/Football/Team/Team View Model/TeamLogoViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
+            landmarkName = "transform()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "78A326D8-AFA1-4F77-9309-F1B4E348E4AD - ee9d18d1ed7f6e08"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Football.TeamLogoViewModel&lt;&#x3c4;_0_0&gt;.Input) -&gt; () in Football.TeamLogoViewModel.transform() -&gt; Combine.AnyPublisher&lt;Football.TeamLogoViewModel&lt;&#x3c4;_0_0&gt;.Output, Swift.Never&gt;"
+                  moduleName = "FootballApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cuulonghoang/Documents/iOS/FootballApp/Football/Sources/Football/Team/Team%20View%20Model/TeamLogoViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "57"
+                  endingLineNumber = "57"
+                  offsetFromSymbolStart = "1464">
+               </Location>
+               <Location
+                  uuid = "78A326D8-AFA1-4F77-9309-F1B4E348E4AD - 228c87668acbb23"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Combine.AnyCancellable) -&gt; () in closure #1 (Football.TeamLogoViewModel&lt;&#x3c4;_0_0&gt;.Input) -&gt; () in Football.TeamLogoViewModel.transform() -&gt; Combine.AnyPublisher&lt;Football.TeamLogoViewModel&lt;&#x3c4;_0_0&gt;.Output, Swift.Never&gt;"
+                  moduleName = "FootballApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cuulonghoang/Documents/iOS/FootballApp/Football/Sources/Football/Team/Team%20View%20Model/TeamLogoViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "57"
+                  endingLineNumber = "57"
+                  offsetFromSymbolStart = "32">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8266BE09-EEBB-460A-95FF-E1A5B6020C6F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../Football/Sources/Football/Team/Team View Model/TeamLogoViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "transform()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "82590554-12C7-4F66-B324-36F7FF2CF2D3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../Football/Sources/Football/Team/Team View Model/TeamLogoViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "transform()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

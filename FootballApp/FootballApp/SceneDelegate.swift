@@ -53,13 +53,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private lazy var baseURL = URL(string: "https://jmde6xvjr4.execute-api.us-east-1.amazonaws.com")!
     
-    private lazy var scheduler: AnyDispatchQueueScheduler = DispatchQueue(
-        label: "com.hoangcuulong.infra.queue",
-        qos: .userInitiated,
-        attributes: .concurrent
-    ).eraseToAnyScheduler()
-    
-    
     private lazy var navigationController = UINavigationController(
         rootViewController: MainUIComposer.mainComposedWith(teamLoader: makeRemoteTeamLoaderWithLocalFallback,
                                                             matchLoader: makeRemoteMatchLoaderWithLocalFallback,
@@ -69,13 +62,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     convenience init(httpClient: HTTPClient,
                      teamStore: TeamStore & TeamLogoDataStore,
-                     matchStore: MatchStore,
-                     scheduler: AnyDispatchQueueScheduler) {
+                     matchStore: MatchStore) {
         self.init()
         self.httpClient = httpClient
         self.teamStore = teamStore
         self.matchStore = matchStore
-        self.scheduler = scheduler
     }
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
