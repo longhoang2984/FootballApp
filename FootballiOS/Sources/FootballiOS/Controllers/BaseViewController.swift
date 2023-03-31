@@ -56,6 +56,7 @@ public class BaseViewController: UIViewController {
         collectionView.bounces = true
         collectionView.dataSource = dataSource
         collectionView.delegate = self
+        collectionView.prefetchDataSource = self
         collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
         layoutCollectionView()
