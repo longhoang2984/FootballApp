@@ -14,7 +14,6 @@ import Combine
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    private let viewModel = AppViewModel()
     
     private lazy var httpClient: HTTPClient = {
         URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
@@ -62,8 +61,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     
     private lazy var navigationController = UINavigationController(
-        rootViewController: MainUIComposer.mainComposedWith(viewModel: viewModel,
-                                                            teamLoader: makeRemoteTeamLoaderWithLocalFallback,
+        rootViewController: MainUIComposer.mainComposedWith(teamLoader: makeRemoteTeamLoaderWithLocalFallback,
                                                             matchLoader: makeRemoteMatchLoaderWithLocalFallback,
                                                             imageLoader: makeLocalImageLoaderWithRemoteFallback,
                                                             awayImageLoader: makeLocalImageLoaderWithRemoteFallback))

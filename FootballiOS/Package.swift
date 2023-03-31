@@ -22,8 +22,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
                 name: "FootballiOS",
-                dependencies: [.product(name: "Football", package: "Football")],
-                resources: [.copy("Sources")]),
+                dependencies: [.product(name: "Football", package: "Football")]),
         .testTarget(
             name: "FootballiOSTests",
             dependencies: ["FootballiOS"]),

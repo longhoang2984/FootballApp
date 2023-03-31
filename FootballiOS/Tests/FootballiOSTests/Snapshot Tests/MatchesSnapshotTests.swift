@@ -7,6 +7,7 @@
 
 import XCTest
 import Football
+import Combine
 @testable import FootballiOS
 
 final class MatchesSnapshotTests: XCTestCase {
@@ -41,7 +42,9 @@ final class MatchesSnapshotTests: XCTestCase {
     // MARK: - Helpers
     
     private func makeSUT() -> (sut: MainViewController, spy: ViewModelSpy) {
-        let spy = ViewModelSpy()
+        let input = PassthroughSubject<AppViewModel.Input, Never>()
+        let output = PassthroughSubject<AppViewModel.Output, Never>()
+        let spy = ViewModelSpy(input: input, output: output)
         let sut = MainViewController(viewModel: spy)
         sut.loadViewIfNeeded()
         return (sut, spy)

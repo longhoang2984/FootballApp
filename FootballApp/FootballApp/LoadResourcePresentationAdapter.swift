@@ -14,26 +14,32 @@ final class LoadResourcePresentationAdapter {
     private let matchLoader: () -> AnyPublisher<[Match], Error>
     private var cancellable: Cancellable?
     private var isLoading = false
-    private let viewModel: AppViewModel
     private var cancellables = Set<AnyCancellable>()
     private let adapter: TeamLogoAdapter
     private var matches: [Match] = []
     private var teams: [Team] = []
+    private let onLoading: (Bool) -> Void
+    private let onError: (Error) -> Void
+    private let onShowTeams: ([Team]) -> Void
     
-    init(viewModel: AppViewModel,
-         teamLoader: @escaping () -> AnyPublisher<[Team], Error>,
+    init(teamLoader: @escaping () -> AnyPublisher<[Team], Error>,
          matchLoader: @escaping () -> AnyPublisher<[Match], Error>,
-         adapter: TeamLogoAdapter) {
-        self.viewModel = viewModel
+         adapter: TeamLogoAdapter,
+         onLoading: @escaping (Bool) -> Void,
+         onError: @escaping (Error) -> Void,
+         onShowTeams: @escaping ([Team]) -> Void) {
         self.matchLoader = matchLoader
         self.teamLoader = teamLoader
         self.adapter = adapter
+        self.onLoading = onLoading
+        self.onError = onError
+        self.onShowTeams = onShowTeams
     }
     
     func loadResource() {
         guard !isLoading else { return }
         
-        viewModel.send(.showLoading(true))
+        onLoading(true)
         isLoading = true
         
         cancellable = teamLoader()
@@ -51,8 +57,8 @@ final class LoadResourcePresentationAdapter {
                             self?.handleError(completion: completion)
                         }, receiveValue: { [weak self] matches in
                             self?.isLoading = false
-                            self?.viewModel.send(.showLoading(false))
-                            self?.viewModel.send(.showTeams(teams))
+                            self?.onLoading(false)
+                            self?.onShowTeams(teams)
                             self?.matches = matches
                             self?.teams = teams
                             self?.adapter.handleSuccessData(teams: teams, matches: matches)
@@ -69,12 +75,12 @@ final class LoadResourcePresentationAdapter {
     }
     
     private func handleError(completion: Subscribers.Completion<Publishers.HandleEvents<AnyPublisher<Any, Error>>.Failure>) {
-        viewModel.send(.showLoading(false))
+        onLoading(false)
         switch completion {
         case .finished: break
             
         case let .failure(error):
-            viewModel.send(.showError(error))
+            onError(error)
         }
         
         isLoading = false

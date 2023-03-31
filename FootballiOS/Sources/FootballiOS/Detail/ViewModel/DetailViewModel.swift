@@ -1,45 +1,49 @@
 //
-//  AppViewModel.swift
+//  DetailViewModel.swift
 //  
 //
-//  Created by Cửu Long Hoàng on 17/03/2023.
+//  Created by Cửu Long Hoàng on 31/03/2023.
 //
 
 import Foundation
 import Combine
 import Football
+import UIKit
 
-public class AppViewModel {
+public class DetailViewModel {
     private let input: PassthroughSubject<Input, Never>
     private let output: PassthroughSubject<Output, Never>
+    private let team: Team
+    private let image: UIImage?
     
-    public init(input: PassthroughSubject<Input, Never>,
-                output: PassthroughSubject<Output, Never>) {
+    public init(team: Team,
+                image: UIImage?,
+        input: PassthroughSubject<Input, Never>,
+        output: PassthroughSubject<Output, Never>) {
         self.input = input
         self.output = output
+        self.team = team
+        self.image = image
     }
     
     public enum Input {
         case getDatas
-        case filterMatches(teamName: String)
         case showLoading(Bool)
         case showError(Error)
-        case showTeams([Team])
-        case showControllers(controllers: [[CellController]])
+        case showControllers(controllers: [CellController])
         case showAllData(teams: [Team], matches: [Match])
     }
     
     public enum Output {
+        case displayDetai(_ team: Team, _ image: UIImage?)
         case displayLoading(Bool)
         case displayError(Error)
-        case displayTeamNames([String])
-        case displayControllers([[CellController]])
+        case displayControllers([CellController])
         case displayAllData(([Team], [Match]))
     }
     
     private var cancellables = Set<AnyCancellable>()
     public var onGetData: (() -> Void)?
-    public var filterMatch: ((_ teamName: String) -> Void)?
     private var controllers = [CellController]()
     
     public func send(_ input: Input) {
@@ -54,12 +58,8 @@ public class AppViewModel {
                 self.onGetData?()
             case let .showLoading(loading):
                 self.output.send(.displayLoading(loading))
-            case let .showTeams(teams):
-                self.output.send(.displayTeamNames(teams.map({ $0.name })))
             case let .showControllers(controllers):
                 self.output.send(.displayControllers(controllers))
-            case let .filterMatches(teamName):
-                self.filterMatch?(teamName)
             case let .showError(error):
                 self.output.send(.displayError(error))
             case let .showAllData(teams, matches):

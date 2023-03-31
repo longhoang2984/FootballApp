@@ -44,9 +44,16 @@ public final class MainViewController: UICollectionViewController, UICollectionV
     }()
     
     private lazy var dataSource: UICollectionViewDiffableDataSource<Int, CellController> = {
-        .init(collectionView: collectionView) { (collectionView, index, controller) in
+        let ds = UICollectionViewDiffableDataSource<Int, CellController>(collectionView: collectionView) { (collectionView, index, controller) in
             controller.dataSource.collectionView(collectionView, cellForItemAt: index)
         }
+        
+        ds.supplementaryViewProvider = { (collectionView, kind, index) -> UICollectionReusableView? in
+            self.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: index)
+        }
+        
+        return ds
+        
     }()
     
     public var onRefresh: (() -> Void)?
@@ -79,6 +86,7 @@ public final class MainViewController: UICollectionViewController, UICollectionV
     private func configureCollectionView() {
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         collectionView.register(MatchCell.self, forCellWithReuseIdentifier: String(describing: MatchCell.self))
+        collectionView.register(MatchHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: MatchHeaderView.self))
         collectionView.refreshControl = refreshControl
         collectionView.dataSource = dataSource
         collectionView.contentInset.top = 50
@@ -124,7 +132,7 @@ public final class MainViewController: UICollectionViewController, UICollectionV
         present(vc, animated: true)
     }
     
-    func display(_ sections: [CellController]...) {
+    func display(_ sections: [[CellController]]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, CellController>()
         sections.enumerated().forEach { section, cellControllers in
             snapshot.appendSections([section])
@@ -176,6 +184,23 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let dl = cellController(at: indexPath)?.flowLayoutDelegate
         return dl?.collectionView?(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath) ?? .zero
+    }
+    
+    public override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: MatchHeaderView.self), for: indexPath) as! MatchHeaderView
+            let type = MatchHeaderView.HeaderType(rawValue: indexPath.section)
+            view.nameLabel.text = (type == .previous ? "Previous" : "Upcoming").uppercased()
+            return view
+        default:
+            return UICollectionReusableView()
+        }
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        return dataSource.numberOfSections(in: collectionView) > 0 ? .init(width: collectionView.bounds.width, height: 50) : .zero
     }
 }
 
