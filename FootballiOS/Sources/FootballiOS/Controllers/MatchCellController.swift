@@ -38,7 +38,7 @@ public final class MatchHeaderView: UICollectionReusableView {
     }
     
     private func setUpUI() {
-        backgroundColor = .secondarySystemGroupedBackground
+        backgroundColor = .tertiarySystemBackground
         addSubview(nameLabel)
         
         NSLayoutConstraint.activate([

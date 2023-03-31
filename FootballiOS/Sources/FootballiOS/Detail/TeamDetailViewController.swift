@@ -57,8 +57,8 @@ public final class TeamDetailViewController: UICollectionViewController, UIColle
             .sink { [weak self] ev in
                 guard let self = self else { return }
                 switch ev {
-                case let .displayControllers(controllers):break
-//                    self.displaySections(controllers: controllers)
+                case let .displayControllers(controllers):
+                    self.display(controllers)
                 case let .displayError(error):
                     self.showErrorAlert(error: error)
                 default: break
@@ -74,7 +74,7 @@ public final class TeamDetailViewController: UICollectionViewController, UIColle
         present(vc, animated: true)
     }
     
-    func display(_ sections: [CellController]...) {
+    func display(_ sections: [[CellController]]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, CellController>()
         sections.enumerated().forEach { section, cellControllers in
             snapshot.appendSections([section])
@@ -126,25 +126,5 @@ extension TeamDetailViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let dl = cellController(at: indexPath)?.flowLayoutDelegate
         return dl?.collectionView?(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath) ?? .zero
-    }
-}
-
-extension UIViewController {
-    func apply<T>(_ f:(T ...) -> T, with elements:[T]) -> T {
-       var elements = elements
-
-       if elements.count == 0 {
-           return f()
-       }
-
-       if elements.count == 1 {
-           return f(elements[0])
-       }
-
-       var result:T = f(elements.removeFirst(), elements.removeFirst())
-
-       result = elements.reduce(result, {f($0, $1)} )
-
-       return result
     }
 }

@@ -71,7 +71,7 @@ final class MatchesSnapshotTests: XCTestCase {
         func didCancelImageRequest() {}
     }
     
-    private func controllers(homeImage: UIImage? = nil, awayImage: UIImage? = nil) -> [CellController] {
+    private func controllers(homeImage: UIImage? = nil, awayImage: UIImage? = nil) -> [[CellController]] {
         let teams = [
             uniqueTeam(teamName: "Team A"),
             uniqueTeam(teamName: "Team B"),
@@ -83,8 +83,9 @@ final class MatchesSnapshotTests: XCTestCase {
             uniquePreviousMatch(),
             uniqueUpcomingMatch(),
         ]
-        
-        return matches.map { match in
+        var previous = [CellController]()
+        var upcoming = [CellController]()
+        matches.forEach { match in
             let home = teams.first(where: { $0.name == match.home })!
             let away = teams.first(where: { $0.name == match.away })!
             
@@ -111,8 +112,14 @@ final class MatchesSnapshotTests: XCTestCase {
             cellController.homeImageViewModel = homeVM
             cellController.awayImageViewModel = awayVM
             
-            return CellController(id: UUID(), cellController)
+            let cell = CellController(id: UUID(), cellController)
+            if match.winner == nil {
+                upcoming.append(cell)
+            } else {
+                previous.append(cell)
+            }
         }
+        return [previous, upcoming]
     }
     
     private func uniquePreviousMatch() -> Match {

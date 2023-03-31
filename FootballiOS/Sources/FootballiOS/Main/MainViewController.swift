@@ -9,13 +9,155 @@ import UIKit
 import Football
 import Combine
 
-public final class MainViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching {
-    private var viewModel: AppViewModel
+public class BaseViewController: UIViewController {
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public lazy var collectionView: UICollectionView = {
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.scrollDirection = .vertical
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        cv.translatesAutoresizingMaskIntoConstraints = false
+        return cv
+    }()
+    
+    lazy var dataSource: UICollectionViewDiffableDataSource<Int, CellController> = {
+        let ds = UICollectionViewDiffableDataSource<Int, CellController>(collectionView: collectionView) { (collectionView, index, controller) in
+            controller.dataSource.collectionView(collectionView, cellForItemAt: index)
+        }
+        
+        ds.supplementaryViewProvider = { (collectionView, kind, index) -> UICollectionReusableView? in
+            self.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: index)
+        }
+        
+        return ds
+        
+    }()
+    
+    private let refreshControl = UIRefreshControl()
+    
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        configureCollectionView()
+        bind()
+        refresh()
+    }
+    
+    private func configureCollectionView() {
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        collectionView.register(MatchCell.self, forCellWithReuseIdentifier: String(describing: MatchCell.self))
+        collectionView.register(MatchHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: MatchHeaderView.self))
+        collectionView.refreshControl = refreshControl
+        collectionView.dataSource = dataSource
+        collectionView.delegate = self
+        collectionView.backgroundColor = .systemBackground
+        view.addSubview(collectionView)
+        layoutCollectionView()
+    }
+    
+    public func layoutCollectionView() {}
+    
+    @objc public func refresh() {}
+    
+    public func bind() {}
+    
+    func showErrorAlert(error: Error) {
+        let vc = UIAlertController(title: "Oops!", message: error.localizedDescription, preferredStyle: .alert)
+        let okBtn = UIAlertAction(title: "OK", style: .cancel)
+        vc.addAction(okBtn)
+        present(vc, animated: true)
+    }
+    
+    func display(_ sections: [[CellController]]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, CellController>()
+        sections.enumerated().forEach { section, cellControllers in
+            snapshot.appendSections([section])
+            snapshot.appendItems(cellControllers, toSection: section)
+        }
+        
+        if #available(iOS 15.0, *) {
+            dataSource.applySnapshotUsingReloadData(snapshot)
+        } else {
+            dataSource.apply(snapshot)
+        }
+    }
+    
+}
+
+extension BaseViewController: UICollectionViewDataSourcePrefetching {
+    
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let dl = cellController(at: indexPath)?.delegate
+        dl?.collectionView?(collectionView, didSelectItemAt: indexPath)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let dl = cellController(at: indexPath)?.delegate
+        dl?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let dl = cellController(at: indexPath)?.delegate
+        dl?.collectionView?(collectionView, didEndDisplaying: cell, forItemAt: indexPath)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        indexPaths.forEach { indexPath in
+            let dsp = cellController(at: indexPath)?.dataSourcePrefetching
+            dsp?.collectionView(collectionView, prefetchItemsAt: [indexPath])
+        }
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        indexPaths.forEach { indexPath in
+            let dsp = cellController(at: indexPath)?.dataSourcePrefetching
+            dsp?.collectionView?(collectionView, cancelPrefetchingForItemsAt: [indexPath])
+        }
+    }
+    
+    private func cellController(at indexPath: IndexPath) -> CellController? {
+        dataSource.itemIdentifier(for: indexPath)
+    }
+}
+
+extension BaseViewController: UICollectionViewDelegateFlowLayout {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let dl = cellController(at: indexPath)?.flowLayoutDelegate
+        return dl?.collectionView?(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath) ?? .zero
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: MatchHeaderView.self), for: indexPath) as! MatchHeaderView
+            let type = MatchHeaderView.HeaderType(rawValue: indexPath.section)
+            view.nameLabel.text = (type == .previous ? "Previous" : "Upcoming").uppercased()
+            return view
+        default:
+            return UICollectionReusableView()
+        }
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        return dataSource.numberOfSections(in: collectionView) > 0 ? .init(width: collectionView.bounds.width, height: 50) : .zero
+    }
+}
+
+public final class MainViewController: BaseViewController {
     private var cancellables = Set<AnyCancellable>()
     
+    private let viewModel: AppViewModel
     public init(viewModel: AppViewModel) {
         self.viewModel = viewModel
-        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+        super.init()
     }
     
     required init?(coder: NSCoder) {
@@ -43,28 +185,22 @@ public final class MainViewController: UICollectionViewController, UICollectionV
         return field
     }()
     
-    private lazy var dataSource: UICollectionViewDiffableDataSource<Int, CellController> = {
-        let ds = UICollectionViewDiffableDataSource<Int, CellController>(collectionView: collectionView) { (collectionView, index, controller) in
-            controller.dataSource.collectionView(collectionView, cellForItemAt: index)
-        }
-        
-        ds.supplementaryViewProvider = { (collectionView, kind, index) -> UICollectionReusableView? in
-            self.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: index)
-        }
-        
-        return ds
-        
-    }()
-    
     public var onRefresh: (() -> Void)?
     
     public override func viewDidLoad() {
+        setUpFilter()
         super.viewDidLoad()
         self.title = "Matches"
-        setUpFilter()
-        configureCollectionView()
-        bind()
-        refresh()
+    }
+    
+    public override func layoutCollectionView() {
+        
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: filterField.bottomAnchor, constant: 8),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
     }
     
     private func setUpFilter() {
@@ -83,16 +219,7 @@ public final class MainViewController: UICollectionViewController, UICollectionV
         filterField.inputAccessoryView = toolBar
     }
     
-    private func configureCollectionView() {
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        collectionView.register(MatchCell.self, forCellWithReuseIdentifier: String(describing: MatchCell.self))
-        collectionView.register(MatchHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: MatchHeaderView.self))
-        collectionView.refreshControl = refreshControl
-        collectionView.dataSource = dataSource
-        collectionView.contentInset.top = 50
-    }
-    
-    @objc private func refresh() {
+    @objc public override func refresh() {
         viewModel.send(.getDatas)
     }
     
@@ -104,7 +231,7 @@ public final class MainViewController: UICollectionViewController, UICollectionV
         self.viewModel.send(.filterMatches(teamName: name))
     }
     
-    public func bind() {
+    public override func bind() {
         let output = viewModel.transform()
         output
             .receive(on: DispatchQueue.main)
@@ -125,14 +252,7 @@ public final class MainViewController: UICollectionViewController, UICollectionV
             .store(in: &cancellables)
     }
     
-    private func showErrorAlert(error: Error) {
-        let vc = UIAlertController(title: "Oops!", message: error.localizedDescription, preferredStyle: .alert)
-        let okBtn = UIAlertAction(title: "OK", style: .cancel)
-        vc.addAction(okBtn)
-        present(vc, animated: true)
-    }
-    
-    func display(_ sections: [[CellController]]) {
+    override func display(_ sections: [[CellController]]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, CellController>()
         sections.enumerated().forEach { section, cellControllers in
             snapshot.appendSections([section])
@@ -144,63 +264,6 @@ public final class MainViewController: UICollectionViewController, UICollectionV
         } else {
             dataSource.apply(snapshot)
         }
-    }
-    
-    public override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let dl = cellController(at: indexPath)?.delegate
-        dl?.collectionView?(collectionView, didSelectItemAt: indexPath)
-    }
-    
-    public override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let dl = cellController(at: indexPath)?.delegate
-        dl?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
-    }
-    
-    public override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let dl = cellController(at: indexPath)?.delegate
-        dl?.collectionView?(collectionView, didEndDisplaying: cell, forItemAt: indexPath)
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach { indexPath in
-            let dsp = cellController(at: indexPath)?.dataSourcePrefetching
-            dsp?.collectionView(collectionView, prefetchItemsAt: [indexPath])
-        }
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach { indexPath in
-            let dsp = cellController(at: indexPath)?.dataSourcePrefetching
-            dsp?.collectionView?(collectionView, cancelPrefetchingForItemsAt: [indexPath])
-        }
-    }
-    
-    private func cellController(at indexPath: IndexPath) -> CellController? {
-        dataSource.itemIdentifier(for: indexPath)
-    }
-}
-
-extension MainViewController: UICollectionViewDelegateFlowLayout {
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let dl = cellController(at: indexPath)?.flowLayoutDelegate
-        return dl?.collectionView?(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath) ?? .zero
-    }
-    
-    public override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: MatchHeaderView.self), for: indexPath) as! MatchHeaderView
-            let type = MatchHeaderView.HeaderType(rawValue: indexPath.section)
-            view.nameLabel.text = (type == .previous ? "Previous" : "Upcoming").uppercased()
-            return view
-        default:
-            return UICollectionReusableView()
-        }
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        
-        return dataSource.numberOfSections(in: collectionView) > 0 ? .init(width: collectionView.bounds.width, height: 50) : .zero
     }
 }
 

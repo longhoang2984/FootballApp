@@ -30,7 +30,7 @@ public class DetailViewModel {
         case getDatas
         case showLoading(Bool)
         case showError(Error)
-        case showControllers(controllers: [CellController])
+        case showControllers(controllers: [[CellController]])
         case showAllData(teams: [Team], matches: [Match])
     }
     
@@ -38,7 +38,7 @@ public class DetailViewModel {
         case displayDetai(_ team: Team, _ image: UIImage?)
         case displayLoading(Bool)
         case displayError(Error)
-        case displayControllers([CellController])
+        case displayControllers([[CellController]])
         case displayAllData(([Team], [Match]))
     }
     
