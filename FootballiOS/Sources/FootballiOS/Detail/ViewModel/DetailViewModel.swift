@@ -55,27 +55,13 @@ public class DetailViewModel: ViewModel {
     }
     
     public func transform() -> AnyPublisher<Output, Never> {
-        input.sink { [weak self] event in
-            guard let self = self else { return }
-            switch event {
-            case .getDatas:
-                self.onGetData?()
-            case let .showLoading(loading):
-                self.output.send(.displayLoading(loading))
-            case let .showControllers(controllers):
-                self.output.send(.displayControllers(controllers))
-            case let .showError(error):
-                self.output.send(.displayError(error))
-            case let .showAllData(teams, matches):
-                self.output.send(.displayAllData((teams, matches)))
-            case let .showSelectionTeam(team, image):
-                self.output.send(.displaySelectionTeam(team: team, image: image))
-            case let .showMatchesInfo(previous, upcoming):
-                self.output.send(.displayMatchesInfo(previous: previous, upcoming: upcoming))
-            }
-        }
-        .store(in: &cancellables)
-        
         return output.eraseToAnyPublisher()
+    }
+    
+    public func cancel() {
+        cancellables.forEach {
+            $0.cancel()
+        }
+        cancellables.removeAll()
     }
 }

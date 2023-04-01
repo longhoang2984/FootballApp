@@ -30,7 +30,7 @@ public final class DetailUIComposer {
                                         input: input,
                                         output: output)
         
-        let detailVC = makeDetailViewController(viewModel: viewModel)
+        let detailVC = makeDetailViewController()
         let logoAdapter = TeamLogoAdapter(viewModel: viewModel,
                                           controller: detailVC,
                                           imageLoader: imageLoader,
@@ -54,7 +54,10 @@ public final class DetailUIComposer {
             input.send(.showControllers(controllers: controllers))
         })
         
-        viewModel.onGetData = {
+        bind(input: input, output: output, viewModel: viewModel)
+        outoutSink(output: output, detailVC: detailVC, viewModel: viewModel)
+        
+        detailVC.onGetData = {
             input.send(.showSelectionTeam(team: team, image: image))
             adapter.loadResource()
         }
@@ -62,9 +65,53 @@ public final class DetailUIComposer {
         return detailVC
     }
     
+    private static func bind(input: PassthroughSubject<DetailViewModel.Input, Never>,
+                             output: PassthroughSubject<DetailViewModel.Output, Never>,
+                             viewModel: DetailViewModel) {
+        input.sink { event in
+            switch event {
+            case .getDatas:
+                viewModel.onGetData?()
+            case let .showLoading(loading):
+                output.send(.displayLoading(loading))
+            case let .showControllers(controllers):
+                output.send(.displayControllers(controllers))
+            case let .showError(error):
+                output.send(.displayError(error))
+            case let .showAllData(teams, matches):
+                output.send(.displayAllData((teams, matches)))
+            case let .showSelectionTeam(team, image):
+                output.send(.displaySelectionTeam(team: team, image: image))
+            case let .showMatchesInfo(previous, upcoming):
+                output.send(.displayMatchesInfo(previous: previous, upcoming: upcoming))
+            }
+        }
+        .store(in: &viewModel.cancellables)
+    }
     
+    private static func outoutSink(output: PassthroughSubject<DetailViewModel.Output, Never>,
+                                   detailVC: TeamDetailViewController,
+                                   viewModel: DetailViewModel) {
+        output
+            .eraseToAnyPublisher()
+            .sink { ev in
+                switch ev {
+                case let .displayControllers(controllers):
+                    detailVC.display(controllers)
+                case let .displayError(error):
+                    detailVC.showErrorAlert(error: error)
+                case let .displaySelectionTeam(team, image):
+                    detailVC.displayImage(img: image)
+                    detailVC.title = team.name
+                case let .displayMatchesInfo(previous, upcoming):
+                    detailVC.displayMatchesInfo(previous: previous, upcoming: upcoming)
+                default: break
+                }
+            }
+            .store(in: &viewModel.cancellables)
+    }
     
-    private static func makeDetailViewController(viewModel: DetailViewModel) -> TeamDetailViewController {
-        TeamDetailViewController(viewModel: viewModel)
+    private static func makeDetailViewController() -> TeamDetailViewController {
+        TeamDetailViewController()
     }
 }

@@ -10,11 +10,8 @@ import Football
 import Combine
 
 public final class TeamDetailViewController: BaseViewController {
-    private var viewModel: DetailViewModel
-    private var cancellables = Set<AnyCancellable>()
     
-    public init(viewModel: DetailViewModel) {
-        self.viewModel = viewModel
+    public override init() {
         super.init()
     }
     
@@ -86,29 +83,19 @@ public final class TeamDetailViewController: BaseViewController {
     }
     
     @objc public override func getData() {
-        viewModel.send(.getDatas)
+        onGetData?()
     }
     
-    public override func bind() {
-        let output = viewModel.transform()
-        output
-//            .receive(on: DispatchQueue.main)
-            .sink { [weak self] ev in
-                guard let self = self else { return }
-                switch ev {
-                case let .displayControllers(controllers):
-                    self.display(controllers)
-                case let .displayError(error):
-                    self.showErrorAlert(error: error)
-                case let .displaySelectionTeam(team, image):
-                    self.logoImageView.image = image
-                    self.title = team.name
-                case let .displayMatchesInfo(previous, upcoming):
-                    self.previousLabel.text = "Played: \(previous) match(es)"
-                    self.upcomingLabel.text = "Upcoming: \(upcoming) match(es)"
-                default: break
-                }
-            }
-            .store(in: &cancellables)
+    public func displayImage(img: UIImage?) {
+        logoImageView.image = img
+    }
+    
+    public func displayMatchesInfo(previous: Int, upcoming: Int) {
+        previousLabel.text = "Played: \(previous) match(es)"
+        upcomingLabel.text = "Upcoming: \(upcoming) match(es)"
+    }
+    
+    deinit {
+        print("DEALLOCATED")
     }
 }

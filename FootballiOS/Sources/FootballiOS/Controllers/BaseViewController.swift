@@ -68,7 +68,7 @@ public class BaseViewController: UIViewController {
     
     public func bind() {}
     
-    func showErrorAlert(error: Error) {
+    public func showErrorAlert(error: Error) {
         let vc = UIAlertController(title: "Oops!", message: error.localizedDescription, preferredStyle: .alert)
         let okBtn = UIAlertAction(title: "OK", style: .cancel)
         vc.addAction(okBtn)

@@ -59,7 +59,7 @@ public final class TeamLogoViewModel<Img> {
             }
         }
         .store(in: &cancellables)
-
+        
         return output.eraseToAnyPublisher()
     }
 }

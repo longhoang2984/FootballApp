@@ -55,27 +55,10 @@ public class AppViewModel: ViewModel {
     }
     
     public func transform() -> AnyPublisher<Output, Never> {
-        input.sink { [weak self] event in
-            guard let self = self else { return }
-            switch event {
-            case .getDatas:
-                self.onGetData?()
-            case let .showLoading(loading):
-                self.output.send(AppViewModel.Output.displayLoading(loading))
-            case let .showTeams(teams):
-                self.output.send(AppViewModel.Output.displayTeamNames(teams.map({ $0.name })))
-            case let .showControllers(controllers):
-                self.output.send(AppViewModel.Output.displayControllers(controllers))
-            case let .filterMatches(teamName):
-                self.filterMatch?(teamName)
-            case let .showError(error):
-                self.output.send(AppViewModel.Output.displayError(error))
-            case let .showAllData(teams, matches):
-                self.output.send(AppViewModel.Output.displayAllData((teams, matches)))
-            }
-        }
-        .store(in: &cancellables)
-        
         return output.eraseToAnyPublisher()
+    }
+    
+    deinit {
+        print("DEALLOCATEDDDDD")
     }
 }

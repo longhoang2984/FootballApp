@@ -41,10 +41,34 @@ public final class MainUIComposer {
         viewModel.onGetData = adapter.loadResource
         viewModel.filterMatch = adapter.filterMatchWithTeamName
         
+        bind(viewModel: viewModel, input: input, output: output)
+        
         return mainVC
     }
     
-    
+    private static func bind(viewModel: AppViewModel,
+                      input: PassthroughSubject<AppViewModel.Input, Never>,
+                      output: PassthroughSubject<AppViewModel.Output, Never>) {
+        input.sink { event in
+            switch event {
+            case .getDatas:
+                viewModel.onGetData?()
+            case let .showLoading(loading):
+                output.send(AppViewModel.Output.displayLoading(loading))
+            case let .showTeams(teams):
+                output.send(AppViewModel.Output.displayTeamNames(teams.map({ $0.name })))
+            case let .showControllers(controllers):
+                output.send(AppViewModel.Output.displayControllers(controllers))
+            case let .filterMatches(teamName):
+                viewModel.filterMatch?(teamName)
+            case let .showError(error):
+                output.send(AppViewModel.Output.displayError(error))
+            case let .showAllData(teams, matches):
+                output.send(AppViewModel.Output.displayAllData((teams, matches)))
+            }
+        }
+        .store(in: &viewModel.cancellables)
+    }
     
     private static func makeMainViewController(title: String, viewModel: AppViewModel) -> MainViewController {
         MainViewController(viewModel: viewModel)

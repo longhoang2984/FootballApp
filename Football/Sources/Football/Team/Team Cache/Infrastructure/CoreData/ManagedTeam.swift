@@ -26,6 +26,7 @@ extension ManagedTeam {
         let request = NSFetchRequest<ManagedTeam>(entityName: entity().name!)
         request.predicate = NSPredicate(format: "%K = %@", argumentArray: [#keyPath(ManagedTeam.logo), url])
         request.returnsObjectsAsFaults = false
+        request.shouldRefreshRefetchedObjects = false
         request.fetchLimit = 1
         return try context.fetch(request).first
     }
