@@ -20,6 +20,7 @@ public final class TeamDetailViewController: BaseViewController {
     }
     
     public var onGetData: (() -> Void)?
+    public var onViewWillDisapear: (() -> Void)?
     
     private(set) public lazy var logoImageView: UIImageView = {
         let imgView = UIImageView()
@@ -90,12 +91,14 @@ public final class TeamDetailViewController: BaseViewController {
         logoImageView.image = img
     }
     
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        display([])
+        onViewWillDisapear?()
+    }
+    
     public func displayMatchesInfo(previous: Int, upcoming: Int) {
         previousLabel.text = "Played: \(previous) match(es)"
         upcomingLabel.text = "Upcoming: \(upcoming) match(es)"
-    }
-    
-    deinit {
-        print("DEALLOCATED")
     }
 }

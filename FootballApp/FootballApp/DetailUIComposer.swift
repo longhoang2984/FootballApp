@@ -31,8 +31,7 @@ public final class DetailUIComposer {
                                         output: output)
         
         let detailVC = makeDetailViewController()
-        let logoAdapter = TeamLogoAdapter(viewModel: viewModel,
-                                          controller: detailVC,
+        let logoAdapter = TeamLogoAdapter(controller: detailVC,
                                           imageLoader: imageLoader,
                                           awayImageLoader: awayImageLoader,
                                           selection: { selectionTeam,image in
@@ -60,6 +59,10 @@ public final class DetailUIComposer {
         detailVC.onGetData = {
             input.send(.showSelectionTeam(team: team, image: image))
             adapter.loadResource()
+        }
+        
+        detailVC.onViewWillDisapear = {
+            viewModel.cancel()
         }
         
         return detailVC

@@ -7,20 +7,17 @@
 
 import UIKit
 import Football
-import Combine
 import Foundation
 
 public final class MatchCellController: NSObject {
-    public typealias ResourceViewModel = UIImage
+    public typealias Img = UIImage
+    
     private let model: DisplayModel
     private let selection: (_ team: String, _ image: UIImage?) -> Void
     private let onShowHighlight: () -> Void
     private var cell: MatchCell?
     private let homeDelegate: MatchCellControllerDelegate
     private let awayDelegate: MatchCellControllerDelegate
-    public var homeImageViewModel: TeamLogoViewModel<UIImage>?
-    public var awayImageViewModel: TeamLogoViewModel<UIImage>?
-    private var cancellables = Set<AnyCancellable>()
     public init(model: DisplayModel,
                 homeDelegate: MatchCellControllerDelegate,
                 awayDelegate: MatchCellControllerDelegate,
@@ -31,30 +28,6 @@ public final class MatchCellController: NSObject {
         self.awayDelegate = awayDelegate
         self.selection = selection
         self.onShowHighlight = onShowHighlight
-    }
-    
-    public func bind() {
-        let output = homeImageViewModel?.transform()
-        output?
-            .sink(receiveValue: { [weak self] ev in
-                switch ev {
-                case let .display(model):
-                    self?.cell?.homeImageContainer.isShimmering = model.isLoading
-                    self?.cell?.homeLogoImageView.setImageAnimated(model.image)
-                }
-            })
-            .store(in: &cancellables)
-        
-        let awayOutput = awayImageViewModel?.transform()
-        awayOutput?
-            .sink(receiveValue: { [weak self] ev in
-                switch ev {
-                case let .display(model):
-                    self?.cell?.awayImageContainer.isShimmering = model.isLoading
-                    self?.cell?.awayLogoImageView.setImageAnimated(model.image)
-                }
-            })
-            .store(in: &cancellables)
     }
 }
 
@@ -118,7 +91,6 @@ extension MatchCellController: UICollectionViewDataSource, UICollectionViewDeleg
     }
     
     private func didRequestImage() {
-        bind()
         if let url = model.homeLogo {
             homeDelegate.didRequestImage(url: url)
         }
@@ -131,6 +103,22 @@ extension MatchCellController: UICollectionViewDataSource, UICollectionViewDeleg
     private func didCancelImageRequest() {
         homeDelegate.didCancelImageRequest()
         awayDelegate.didCancelImageRequest()
+    }
+}
+
+extension MatchCellController: TeamLogoView {
+    public func display(_ model: TeamLogoModel<UIImage>) {
+        if self.model.homeLogo == model.url {
+            cell?.homeImageContainer.isShimmering = model.isLoading
+            if model.image != nil {
+                cell?.homeLogoImageView.image = model.image
+            }
+        } else {
+            cell?.awayImageContainer.isShimmering = model.isLoading
+            if model.image != nil {
+                cell?.awayLogoImageView.image = model.image
+            }
+        }
     }
 }
 

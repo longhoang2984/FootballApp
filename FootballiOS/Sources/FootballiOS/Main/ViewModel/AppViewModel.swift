@@ -57,8 +57,4 @@ public class AppViewModel: ViewModel {
     public func transform() -> AnyPublisher<Output, Never> {
         return output.eraseToAnyPublisher()
     }
-    
-    deinit {
-        print("DEALLOCATEDDDDD")
-    }
 }

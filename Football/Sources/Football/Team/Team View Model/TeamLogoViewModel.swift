@@ -11,55 +11,48 @@ import Combine
 public struct TeamLogoModel<Img> {
     public let image: Img?
     public let isLoading: Bool
+    public let url: URL
     
-    public init(image: Img?, isLoading: Bool) {
+    public init(image: Img?,
+                isLoading: Bool,
+                url: URL) {
         self.image = image
         self.isLoading = isLoading
+        self.url = url
     }
 }
 
-public final class TeamLogoViewModel<Img> {
-    public enum Input {
-        case requestImage
-        case cancelImage
-        case showImageData(Data)
-        case showError(Error)
-    }
+public protocol TeamLogoView {
+    associatedtype Img
     
-    public enum Output {
-        case display(TeamLogoModel<Img>)
-    }
-    
-    public typealias Mapper = (Data) throws -> Img?
+    func display(_ model: TeamLogoModel<Img>)
+}
+
+public final class TeamLogoViewModel<View: TeamLogoView, Img> where View.Img == Img {
+    public typealias Mapper = (Data) throws -> View.Img?
+    private let view: View
     private let mapper: Mapper
-    private let output: PassthroughSubject<Output, Never> = .init()
-    private var cancellables = Set<AnyCancellable>()
-    public let input = PassthroughSubject<TeamLogoViewModel<Img>.Input, Never>()
     
-    public init(mapper: @escaping Mapper) {
+    public init(view: View,
+                mapper: @escaping Mapper) {
+        self.view = view
         self.mapper = mapper
     }
     
-    public func transform() -> AnyPublisher<Output, Never> {
-        input.sink { [weak self] event in
-            guard let self = self else { return }
-            switch event {
-            case .requestImage:
-                self.output.send(.display(TeamLogoModel(image: nil,
-                                                        isLoading: true)))
-            case let .showImageData(data):
-                guard let img = try? self.mapper(data) else { return }
-                self.output.send(.display(TeamLogoModel(image: img,
-                                                        isLoading: false)))
-            case .cancelImage:
-                self.cancellables.forEach { $0.cancel() }
-            case .showError:
-                self.output.send(.display(TeamLogoModel(image: nil,
-                                                        isLoading: false)))
-            }
-        }
-        .store(in: &cancellables)
-        
-        return output.eraseToAnyPublisher()
+    public func didStartLoadingImageData(url: URL) {
+        view.display(TeamLogoModel(image: nil,
+                                        isLoading: true,
+                                    url: url))
+    }
+    
+    public func didFinishLoadingImageData(with data: Data, url: URL) {
+        guard let img = try? mapper(data) else { return }
+        view.display(TeamLogoModel(image: img,
+                                        isLoading: false, url: url))
+    }
+    
+    public func didFinishLoadingImageData(with error: Error, url: URL) {
+        view.display(TeamLogoModel(image: nil,
+                                        isLoading: false, url: url))
     }
 }

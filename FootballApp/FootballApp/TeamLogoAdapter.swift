@@ -11,59 +11,21 @@ import FootballiOS
 import Combine
 import AVKit
 
-final class TeamLogoLoaderAdapter<Img>: MatchCellControllerDelegate {
-    
-    private let imageLoader: (URL) -> TeamLogoDataLoader.Publisher
-    private var cancellable: AnyCancellable?
-    
-    var viewModel: TeamLogoViewModel<Img>?
-    
-    init(imageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher) {
-        self.imageLoader = imageLoader
-        
-    }
-    
-    func didCancelImageRequest() {
-        viewModel?.input.send(.cancelImage)
-        cancellable?.cancel()
-        cancellable = nil
-    }
-    
-    func didRequestImage(url: URL) {
-        viewModel?.input.send(.requestImage)
-        
-        cancellable = imageLoader(url)
-            .dispatchOnMainQueue()
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished: break
-                case let .failure(error):
-                    self?.viewModel?.input.send(.showError(error))
-                }
-            } receiveValue: { [weak self] data in
-                self?.viewModel?.input.send(.showImageData(data))
-            }
-        
-    }
-}
-
 final class TeamLogoAdapter {
+    
     private weak var controller: UIViewController?
     private let imageLoader: (URL) -> TeamLogoDataLoader.Publisher
     private let awayImageLoader: (URL) -> TeamLogoDataLoader.Publisher
     
-    private typealias TeamLogoViewModelAdapter = TeamLogoLoaderAdapter<UIImage>
-    private var cancellables = Set<AnyCancellable>()
-    private let viewModel: ViewModel
+    private typealias TeamLogoViewModelAdapter = TeamLogoLoaderAdapter<WeakRefVirtualProxy<MatchCellController>, UIImage>
+    
     private let selection: (_ team: Team, _ image: UIImage?) -> Void
     private let onShowMatchesInfo: (_ previous: Int, _ upcoming: Int) -> Void
-    init(viewModel: ViewModel,
-         controller: UIViewController,
+    init(controller: UIViewController,
          imageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
          awayImageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
          selection: @escaping (_ team: Team, _ image: UIImage?) -> Void,
          onShowMatchesInfo: @escaping (_ previous: Int, _ upcoming: Int) -> Void = { _, _ in }) {
-        self.viewModel = viewModel
         self.imageLoader = imageLoader
         self.awayImageLoader = awayImageLoader
         self.controller = controller
@@ -80,15 +42,10 @@ final class TeamLogoAdapter {
                 imageLoader(url)
             })
             
-            let homeLogoVM = TeamLogoViewModel<UIImage>(mapper: UIImage.tryMake)
-            homeAdapter.viewModel = homeLogoVM
-            
             let away = teams.first(where: { $0.name == match.away })
             let awayAdapter = TeamLogoViewModelAdapter(imageLoader: { [awayImageLoader] url in
                 awayImageLoader(url)
             })
-            let awayLogoVM = TeamLogoViewModel<UIImage>(mapper: UIImage.tryMake)
-            awayAdapter.viewModel = awayLogoVM
             
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "dd/MM"
@@ -112,9 +69,14 @@ final class TeamLogoAdapter {
                                            onShowHighlight: { [weak self] in
                 self?.playHighlight(url: match.highlights)
             })
-            view.homeImageViewModel = homeLogoVM
             
-            view.awayImageViewModel = awayLogoVM
+            let homeLogoVM = TeamLogoViewModel(view: WeakRefVirtualProxy(view),
+                                               mapper: UIImage.tryMake)
+            homeAdapter.viewModel = homeLogoVM
+            
+            let awayLogoVM = TeamLogoViewModel(view: WeakRefVirtualProxy(view),
+                                               mapper: UIImage.tryMake)
+            awayAdapter.viewModel = awayLogoVM
             
             let controller = CellController(id: "\(home?.id.uuidString ?? "")\(away?.id.uuidString ?? "")\(date)\(time)", view)
             if match.winner == nil {
@@ -149,5 +111,19 @@ extension UIImage {
         }
         
         return image
+    }
+}
+
+final class WeakRefVirtualProxy<T: AnyObject> {
+    private weak var object: T?
+    
+    init(_ object: T) {
+        self.object = object
+    }
+}
+
+extension WeakRefVirtualProxy: TeamLogoView where T: TeamLogoView, T.Img == UIImage {
+    func display(_ model: TeamLogoModel<UIImage>) {
+        object?.display(model)
     }
 }

@@ -26,7 +26,8 @@ public final class MainUIComposer {
         let viewModel = AppViewModel(input: input, output: output)
         
         let mainVC = makeMainViewController(title: "Matches", viewModel: viewModel)
-        let logoAdapter = TeamLogoAdapter(viewModel: viewModel, controller: mainVC, imageLoader: imageLoader,
+        let logoAdapter = TeamLogoAdapter(controller: mainVC,
+                                          imageLoader: imageLoader,
                                           awayImageLoader: awayImageLoader,
                                           selection: selection)
         
