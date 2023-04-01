@@ -14,7 +14,7 @@ import AVKit
 final class TeamLogoLoaderAdapter<Img>: MatchCellControllerDelegate {
     
     private let imageLoader: (URL) -> TeamLogoDataLoader.Publisher
-    private var cancellables = Set<AnyCancellable>()
+    private var cancellable: AnyCancellable?
     
     var viewModel: TeamLogoViewModel<Img>?
     
@@ -25,13 +25,14 @@ final class TeamLogoLoaderAdapter<Img>: MatchCellControllerDelegate {
     
     func didCancelImageRequest() {
         viewModel?.input.send(.cancelImage)
-        cancellables.forEach({ $0.cancel() })
+        cancellable?.cancel()
+        cancellable = nil
     }
     
     func didRequestImage(url: URL) {
         viewModel?.input.send(.requestImage)
         
-        imageLoader(url)
+        cancellable = imageLoader(url)
             .dispatchOnMainQueue()
             .sink { [weak self] completion in
                 switch completion {
@@ -42,7 +43,6 @@ final class TeamLogoLoaderAdapter<Img>: MatchCellControllerDelegate {
             } receiveValue: { [weak self] data in
                 self?.viewModel?.input.send(.showImageData(data))
             }
-            .store(in: &cancellables)
         
     }
 }
