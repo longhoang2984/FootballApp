@@ -12,7 +12,7 @@ import Combine
 @testable import FootballApp
 
 extension MainUIIntegrationTests {
-    class TeamLoaderSpy {
+    class LoaderSpy {
         
         // MARK: - TeamLoader
         private var teamRequests = [PassthroughSubject<[Team], Error>]()
@@ -61,9 +61,7 @@ extension MainUIIntegrationTests {
         func completeImageLoadingWithError(at index: Int = 0) {
             homeImageRequests[index].publisher.send(completion: .failure(anyNSError()))
         }
-    }
-    
-    class MatchLoaderSpy {
+        
         // MARK: - MatchLoader
         private var matchRequests = [PassthroughSubject<[Match], Error>]()
         
@@ -71,7 +69,7 @@ extension MainUIIntegrationTests {
             return matchRequests.count
         }
         
-        func loadPublisher() -> AnyPublisher<[Match], Error> {
+        func loadMatchPublisher() -> AnyPublisher<[Match], Error> {
             let publisher = PassthroughSubject<[Match], Error>()
             matchRequests.append(publisher)
             return publisher.eraseToAnyPublisher()
