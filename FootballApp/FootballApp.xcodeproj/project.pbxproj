@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		2F4EC1BD29C08EB400B365AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4EC1BC29C08EB400B365AD /* AppDelegate.swift */; };
 		2F4EC1BF29C08EB400B365AD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4EC1BE29C08EB400B365AD /* SceneDelegate.swift */; };
-		2F4EC1C129C08EB400B365AD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4EC1C029C08EB400B365AD /* ViewController.swift */; };
 		2F4EC1C429C08EB400B365AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F4EC1C229C08EB400B365AD /* Main.storyboard */; };
 		2F4EC1C929C08EB500B365AD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F4EC1C829C08EB500B365AD /* Assets.xcassets */; };
 		2F4EC1CC29C08EB500B365AD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F4EC1CA29C08EB500B365AD /* LaunchScreen.storyboard */; };
 		2F4EC1D729C08EB500B365AD /* FootballAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4EC1D629C08EB500B365AD /* FootballAppTests.swift */; };
 		2F597AF029D898DF00E86DBE /* TeamLogoLoaderAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597AEF29D898DF00E86DBE /* TeamLogoLoaderAdapter.swift */; };
+		2F597AF329D94F2500E86DBE /* HTTPClientStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597AF229D94F2500E86DBE /* HTTPClientStub.swift */; };
+		2F597AF529D94F7B00E86DBE /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597AF429D94F7B00E86DBE /* XCTestCase+MemoryLeakTracking.swift */; };
+		2F597AF729D9501000E86DBE /* SceneDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597AF629D9501000E86DBE /* SceneDelegateTests.swift */; };
 		2F6AF9A929C3267A001A7219 /* MainUIComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9A829C32679001A7219 /* MainUIComposer.swift */; };
 		2F6AF9AB29C326B3001A7219 /* CombineHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9AA29C326B3001A7219 /* CombineHelpers.swift */; };
 		2F6AF9AD29C327BE001A7219 /* NullStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9AC29C327BE001A7219 /* NullStore.swift */; };
@@ -39,7 +41,6 @@
 		2F4EC1B929C08EB400B365AD /* FootballApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FootballApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F4EC1BC29C08EB400B365AD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2F4EC1BE29C08EB400B365AD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		2F4EC1C029C08EB400B365AD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		2F4EC1C329C08EB400B365AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2F4EC1C829C08EB500B365AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F4EC1CB29C08EB500B365AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -48,6 +49,9 @@
 		2F4EC1D629C08EB500B365AD /* FootballAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootballAppTests.swift; sourceTree = "<group>"; };
 		2F4EC1F529C0939500B365AD /* Football */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Football; path = ../Football; sourceTree = "<group>"; };
 		2F597AEF29D898DF00E86DBE /* TeamLogoLoaderAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamLogoLoaderAdapter.swift; sourceTree = "<group>"; };
+		2F597AF229D94F2500E86DBE /* HTTPClientStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClientStub.swift; sourceTree = "<group>"; };
+		2F597AF429D94F7B00E86DBE /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
+		2F597AF629D9501000E86DBE /* SceneDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegateTests.swift; sourceTree = "<group>"; };
 		2F6AF9A529C0E6EA001A7219 /* FootballiOS */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FootballiOS; path = ../FootballiOS; sourceTree = "<group>"; };
 		2F6AF9A829C32679001A7219 /* MainUIComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainUIComposer.swift; sourceTree = "<group>"; };
 		2F6AF9AA29C326B3001A7219 /* CombineHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineHelpers.swift; sourceTree = "<group>"; };
@@ -103,7 +107,6 @@
 			children = (
 				2F4EC1BC29C08EB400B365AD /* AppDelegate.swift */,
 				2F4EC1BE29C08EB400B365AD /* SceneDelegate.swift */,
-				2F4EC1C029C08EB400B365AD /* ViewController.swift */,
 				2F4EC1C229C08EB400B365AD /* Main.storyboard */,
 				2F4EC1C829C08EB500B365AD /* Assets.xcassets */,
 				2F4EC1CA29C08EB500B365AD /* LaunchScreen.storyboard */,
@@ -122,7 +125,9 @@
 		2F4EC1D529C08EB500B365AD /* FootballAppTests */ = {
 			isa = PBXGroup;
 			children = (
+				2F597AF129D94F1B00E86DBE /* Helpers */,
 				2F4EC1D629C08EB500B365AD /* FootballAppTests.swift */,
+				2F597AF629D9501000E86DBE /* SceneDelegateTests.swift */,
 			);
 			path = FootballAppTests;
 			sourceTree = "<group>";
@@ -132,6 +137,15 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2F597AF129D94F1B00E86DBE /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				2F597AF229D94F2500E86DBE /* HTTPClientStub.swift */,
+				2F597AF429D94F7B00E86DBE /* XCTestCase+MemoryLeakTracking.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -243,7 +257,6 @@
 				2FE7831B29D7695300A893E3 /* DetailUIComposer.swift in Sources */,
 				2F6AF9AD29C327BE001A7219 /* NullStore.swift in Sources */,
 				2F6AF9B129C3377C001A7219 /* TeamLogoAdapter.swift in Sources */,
-				2F4EC1C129C08EB400B365AD /* ViewController.swift in Sources */,
 				2F6AF9AF29C32F3D001A7219 /* LoadResourcePresentationAdapter.swift in Sources */,
 				2F4EC1BD29C08EB400B365AD /* AppDelegate.swift in Sources */,
 				2F6AF9A929C3267A001A7219 /* MainUIComposer.swift in Sources */,
@@ -256,7 +269,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F597AF329D94F2500E86DBE /* HTTPClientStub.swift in Sources */,
 				2F4EC1D729C08EB500B365AD /* FootballAppTests.swift in Sources */,
+				2F597AF529D94F7B00E86DBE /* XCTestCase+MemoryLeakTracking.swift in Sources */,
+				2F597AF729D9501000E86DBE /* SceneDelegateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
