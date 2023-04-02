@@ -33,10 +33,10 @@
       <CodeCoverageTargets>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "Football"
-            BuildableName = "Football"
-            BlueprintName = "Football"
-            ReferencedContainer = "container:../Football">
+            BlueprintIdentifier = "FootballiOS"
+            BuildableName = "FootballiOS"
+            BlueprintName = "FootballiOS"
+            ReferencedContainer = "container:">
          </BuildableReference>
       </CodeCoverageTargets>
       <Testables>

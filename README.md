@@ -22,7 +22,11 @@ Device | 14 Pro
 #### MVVM + Combine
 
 #### Missing:
-1. Correct way to present team detail.
+Test Coverage is not 100%
+- Football Package: 93.2%
+- FootballiOS Package: 78.7%
+- FootballApp: 86.7%
+    Note: Almost missing is support functions.
 
 #### How to build
 1. Switch to `Football` scheme and run `CMD+B`

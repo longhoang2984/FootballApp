@@ -63,7 +63,11 @@ final class DetailSnapshotTests: XCTestCase {
     // MARK: - Helpers
     
     private func makeSUT() -> (TeamDetailViewController) {
-        let sut = TeamDetailViewController()
+        let detailVM = DetailViewModel(team: uniqueTeam(teamName: "Team A"),
+                                       image: UIImage.make(withColor: .red),
+                                       input: .init(),
+                                       output: .init())
+        let sut = TeamDetailViewController(viewModel: detailVM)
         sut.loadViewIfNeeded()
         sut.displayImage(img: .make(withColor: .blue))
         return (sut)
