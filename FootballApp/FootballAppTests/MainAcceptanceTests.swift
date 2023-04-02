@@ -49,6 +49,11 @@ final class MainAcceptanceTests: XCTestCase {
         XCTAssertEqual(offlineData.renderedAwayImageData(at: 0, section: upcomingSection), makeImageKing())
     }
 
+    func test_onLaunch_displaysEmptyMatchAndTeamWhenCustomerHasNoConnectivityAndNoCache() {
+        let data = launch(httpClient: .offline, teamStore: .empty, matchStore: .empty)
+        
+        XCTAssertEqual(data.numberOfRenderedViews(section: previousSection), 0)
+    }
 
     // MARK: - Helpers
     private func launch(
