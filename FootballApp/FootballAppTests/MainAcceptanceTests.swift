@@ -54,6 +54,18 @@ final class MainAcceptanceTests: XCTestCase {
         
         XCTAssertEqual(data.numberOfRenderedViews(section: previousSection), 0)
     }
+    
+    func test_onHomeSelection_displaysDetails() {
+        let detail = showDetailForHomeTeam()
+        detail.getData()
+        XCTAssertEqual(detail.numberOfRenderedViews(section: previousSection), 1)
+        XCTAssertEqual(detail.renderedHomeImageData(at: 0, section: previousSection), makeImageEagle())
+        XCTAssertEqual(detail.renderedAwayImageData(at: 0, section: previousSection), makeImageDragons())
+        
+        XCTAssertEqual(detail.numberOfRenderedViews(section: upcomingSection), 0)
+        XCTAssertNil(detail.renderedHomeImageData(at: 0, section: upcomingSection))
+        XCTAssertNil(detail.renderedAwayImageData(at: 0, section: upcomingSection))
+    }
 
     // MARK: - Helpers
     private func launch(
@@ -73,6 +85,18 @@ final class MainAcceptanceTests: XCTestCase {
         let vc = nav?.topViewController as! MainViewController
         vc.loadViewIfNeeded()
         return vc
+    }
+    
+    private func showDetailForHomeTeam() -> TeamDetailViewController {
+        let data = launch(httpClient: .online(response), teamStore: .empty, matchStore: .empty)
+        
+        data.simulateTapOnHomeTeamName(at: 0, section: previousSection)
+        RunLoop.current.run(until: Date())
+        
+        let nav = data.navigationController
+        let detail = nav?.topViewController as! TeamDetailViewController
+        detail.loadViewIfNeeded()
+        return detail
     }
 
     private func response(for url: URL) -> (Data, HTTPURLResponse) {
@@ -186,14 +210,14 @@ extension BaseViewController {
         let datasource = collectionView.dataSource
         let index = IndexPath(item: item, section: section)
         let cell = datasource?.collectionView(collectionView, cellForItemAt: index) as? MatchCell
-        cell?.homeNameLabel.simulate()
+        cell?.selection?(true)
     }
     
     func simulateTapOnAwayTeamName(at item: Int, section: Int) {
         let datasource = collectionView.dataSource
         let index = IndexPath(item: item, section: section)
         let cell = datasource?.collectionView(collectionView, cellForItemAt: index) as? MatchCell
-        cell?.awayNameLabel.simulate()
+        cell?.selection?(false)
     }
     
     func simulateMatchViewNearVisible(at item: Int, section: Int) {
@@ -232,9 +256,7 @@ extension BaseViewController {
 
 extension UIView {
     func simulate() {
-        gestureRecognizers?.forEach { gesture in
-            gesture.state = .ended
-        }
+        
     }
 }
 
