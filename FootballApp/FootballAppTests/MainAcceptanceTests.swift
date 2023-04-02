@@ -25,6 +25,30 @@ final class MainAcceptanceTests: XCTestCase {
         XCTAssertEqual(data.renderedHomeImageData(at: 0, section: upcomingSection), makeImagePanda())
         XCTAssertEqual(data.renderedAwayImageData(at: 0, section: upcomingSection), makeImageKing())
     }
+    
+    func test_onLaunch_displaysCachedMatchAndTeamWhenCustomerHasNoConnectivity() {
+        let sharedTeamStore = InMemoryTeamStore.empty
+        let sharedMatchStore = InMemoryMatchStore.empty
+        
+        let onlineData = launch(httpClient: .online(response), teamStore: sharedTeamStore, matchStore: sharedMatchStore)
+        XCTAssertEqual(onlineData.numberOfRenderedViews(section: previousSection), 1)
+        XCTAssertEqual(onlineData.renderedHomeImageData(at: 0, section: previousSection), makeImageEagle())
+        XCTAssertEqual(onlineData.renderedAwayImageData(at: 0, section: previousSection), makeImageDragons())
+        
+        XCTAssertEqual(onlineData.numberOfRenderedViews(section: upcomingSection), 1)
+        XCTAssertEqual(onlineData.renderedHomeImageData(at: 0, section: upcomingSection), makeImagePanda())
+        XCTAssertEqual(onlineData.renderedAwayImageData(at: 0, section: upcomingSection), makeImageKing())
+        
+        let offlineData = launch(httpClient: .offline, teamStore: sharedTeamStore, matchStore: sharedMatchStore)
+        XCTAssertEqual(offlineData.numberOfRenderedViews(section: previousSection), 1)
+        XCTAssertEqual(offlineData.renderedHomeImageData(at: 0, section: previousSection), makeImageEagle())
+        XCTAssertEqual(offlineData.renderedAwayImageData(at: 0, section: previousSection), makeImageDragons())
+        
+        XCTAssertEqual(offlineData.numberOfRenderedViews(section: upcomingSection), 1)
+        XCTAssertEqual(offlineData.renderedHomeImageData(at: 0, section: upcomingSection), makeImagePanda())
+        XCTAssertEqual(offlineData.renderedAwayImageData(at: 0, section: upcomingSection), makeImageKing())
+    }
+
 
     // MARK: - Helpers
     private func launch(
