@@ -58,7 +58,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                                                             matchLoader: makeRemoteMatchLoaderWithLocalFallback,
                                                             imageLoader: makeLocalImageLoaderWithRemoteFallback,
                                                             awayImageLoader: makeLocalImageLoaderWithRemoteFallback,
-                                                            selection: showDetail))
+                                                            selection: { self.showDetail(team: $0, image: $1) }))
     
     convenience init(httpClient: HTTPClient,
                      teamStore: TeamStore & TeamLogoDataStore,
@@ -81,15 +81,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
     }
     
-    private func showDetail(team: Team, image: UIImage?) {
+    private func showDetail(team: Team, image: UIImage?, animated: Bool = true) {
         let vc = DetailUIComposer.detailComposedWith(team: team,
                                             image: image,
                                             teamLoader: localTeamLoader.loadPublisher,
                                             matchLoader: localMatchLoader.loadPublisher,
                                             imageLoader: makeLocalImageLoaderWithRemoteFallback,
                                             awayImageLoader: makeLocalImageLoaderWithRemoteFallback,
-                                            selection: showDetail)
-        navigationController.pushViewController(vc, animated: true)
+                                                     selection: { [weak self] team, img in
+            // Avoid Loop Detail View
+            self?.navigationController.popViewController(animated: false)
+            self?.showDetail(team: team, image: img, animated: false)
+        })
+        navigationController.pushViewController(vc, animated: animated)
     }
     
     private func makeRemoteTeamLoaderWithLocalFallback() -> AnyPublisher<[Team], Error> {
