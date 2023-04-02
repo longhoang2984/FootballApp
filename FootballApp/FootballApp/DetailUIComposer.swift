@@ -31,8 +31,7 @@ public final class DetailUIComposer {
                                         output: output)
         
         let detailVC = makeDetailViewController()
-        let logoAdapter = TeamLogoAdapter(controller: detailVC,
-                                          imageLoader: imageLoader,
+        let logoAdapter = TeamLogoAdapter(imageLoader: imageLoader,
                                           awayImageLoader: awayImageLoader,
                                           selection: { selectionTeam,image in
             if team != selectionTeam {
@@ -43,7 +42,6 @@ public final class DetailUIComposer {
         
         let adapter = LoadResourcePresentationAdapter(teamLoader: teamLoader,
                                                       matchLoader: matchLoader,
-                                                      adapter: logoAdapter,
                                                       onLoading: { input.send(.showLoading($0)) },
                                                       onError: { input.send(.showError($0)) },
                                                       onShowTeams: { _ in },

@@ -12,10 +12,8 @@ import FootballiOS
 final class LoadResourcePresentationAdapter {
     private let teamLoader: () -> AnyPublisher<[Team], Error>
     private let matchLoader: () -> AnyPublisher<[Match], Error>
-    private var cancellable: Cancellable?
     private var isLoading = false
-    private var cancellables = Set<AnyCancellable>()
-    private let adapter: TeamLogoAdapter
+    private var cancellable: AnyCancellable?
     private var matches: [Match] = []
     private var teams: [Team] = []
     private let onLoading: (Bool) -> Void
@@ -25,14 +23,12 @@ final class LoadResourcePresentationAdapter {
     
     init(teamLoader: @escaping () -> AnyPublisher<[Team], Error>,
          matchLoader: @escaping () -> AnyPublisher<[Match], Error>,
-         adapter: TeamLogoAdapter,
          onLoading: @escaping (Bool) -> Void,
          onError: @escaping (Error) -> Void,
          onShowTeams: @escaping ([Team]) -> Void = { _ in },
          onShowData: @escaping ([Team], [Match]) -> Void = { _, _ in }) {
         self.matchLoader = matchLoader
         self.teamLoader = teamLoader
-        self.adapter = adapter
         self.onLoading = onLoading
         self.onError = onError
         self.onShowTeams = onShowTeams
@@ -54,7 +50,10 @@ final class LoadResourcePresentationAdapter {
                 receiveCompletion: { [weak self] completion in
                     self?.handleError(completion: completion)
                 }, receiveValue: { [weak self] teams in
-                    self?.cancellable = self?.matchLoader()
+                    self?.cancellable?.cancel()
+                    self?.cancellable = nil
+                    guard let self = self else { return }
+                    self.cancellable = self.matchLoader()
                         .dispatchOnMainQueue()
                         .sink(receiveCompletion: { [weak self] completion in
                             self?.handleError(completion: completion)

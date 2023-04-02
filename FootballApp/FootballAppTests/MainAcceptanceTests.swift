@@ -78,6 +78,18 @@ final class MainAcceptanceTests: XCTestCase {
         XCTAssertEqual(detail.renderedHomeImageData(at: 0, section: upcomingSection), makeImagePanda())
         XCTAssertEqual(detail.renderedAwayImageData(at: 0, section: upcomingSection), makeImageKing())
     }
+    
+    func test_displaysRemoteMatchAndTeamWhenCustomerHasConnectivity_andFilterMatch() {
+        let data = launch(httpClient: .online(response), teamStore: .empty, matchStore: .empty)
+        
+        XCTAssertEqual(data.numberOfRenderedViews(section: previousSection), 1)
+        XCTAssertEqual(data.renderedHomeImageData(at: 0, section: previousSection), makeImageEagle())
+        XCTAssertEqual(data.renderedAwayImageData(at: 0, section: previousSection), makeImageDragons())
+        
+        XCTAssertEqual(data.numberOfRenderedViews(section: upcomingSection), 1)
+        XCTAssertEqual(data.renderedHomeImageData(at: 0, section: upcomingSection), makeImagePanda())
+        XCTAssertEqual(data.renderedAwayImageData(at: 0, section: upcomingSection), makeImageKing())
+    }
 
     // MARK: - Helpers
     private func launch(
@@ -174,146 +186,4 @@ final class MainAcceptanceTests: XCTestCase {
     private func makeImageEagle() -> Data { UIImage.make(withColor: .green).pngData()! }
     private func makeImagePanda() -> Data { UIImage.make(withColor: .brown).pngData()! }
     private func makeImageKing() -> Data { UIImage.make(withColor: .yellow).pngData()! }
-}
-
-extension BaseViewController {
-    public override func loadViewIfNeeded() {
-        super.loadViewIfNeeded()
-        
-        collectionView.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-    }
-    
-    var isShowingLoadingIndicator: Bool {
-        return loadingIndicator.parent != nil
-    }
-    
-    func numberOfItems(in section: Int) -> Int {
-        collectionView.numberOfSections > section ? collectionView.numberOfItems(inSection: section) : 0
-    }
-    
-    func cell(item: Int, section: Int) -> UICollectionViewCell? {
-        guard numberOfItems(in: section) > item else {
-            return nil
-        }
-        let ds = collectionView.dataSource
-        let index = IndexPath(item: item, section: section)
-        return ds?.collectionView(collectionView, cellForItemAt: index)
-    }
-}
-
-extension BaseViewController {
-    
-    @discardableResult
-    func simulateMatchViewVisible(at index: Int, section: Int) -> MatchCell? {
-        return matchView(at: index, section: section) as? MatchCell
-    }
-    
-    @discardableResult
-    func simulateMatchBecomingVisibleAgain(at item: Int, section: Int) -> MatchCell? {
-        let view = simulateMatchViewNotVisible(at: item, section: section)
-        
-        let delegate = collectionView.delegate
-        let index = IndexPath(item: item, section: section)
-        delegate?.collectionView?(collectionView, willDisplay: view!, forItemAt: index)
-        
-        return view
-    }
-    
-    @discardableResult
-    func simulateMatchViewNotVisible(at item: Int, section: Int) -> MatchCell? {
-        let view = simulateMatchViewVisible(at: item, section: section)
-        
-        let delegate = collectionView.delegate
-        let index = IndexPath(item: item, section: section)
-        delegate?.collectionView?(collectionView, didEndDisplaying: view!, forItemAt: index)
-        
-        return view
-    }
-    
-    func simulateTapOnHomeTeamName(at item: Int, section: Int) {
-        let datasource = collectionView.dataSource
-        let index = IndexPath(item: item, section: section)
-        let cell = datasource?.collectionView(collectionView, cellForItemAt: index) as? MatchCell
-        cell?.selection?(true)
-    }
-    
-    func simulateTapOnAwayTeamName(at item: Int, section: Int) {
-        let datasource = collectionView.dataSource
-        let index = IndexPath(item: item, section: section)
-        let cell = datasource?.collectionView(collectionView, cellForItemAt: index) as? MatchCell
-        cell?.selection?(false)
-    }
-    
-    func simulateMatchViewNearVisible(at item: Int, section: Int) {
-        let ds = collectionView.prefetchDataSource
-        let index = IndexPath(item: item, section: section)
-        ds?.collectionView(collectionView, prefetchItemsAt: [index])
-    }
-    
-    func simulateMatchViewNotNearVisible(at item: Int, section: Int) {
-        simulateMatchViewNearVisible(at: item, section: section)
-        
-        let ds = collectionView.prefetchDataSource
-        let index = IndexPath(item: item, section: section)
-        ds?.collectionView?(collectionView, cancelPrefetchingForItemsAt: [index])
-    }
-    
-    func renderedHomeImageData(at index: Int, section: Int) -> Data? {
-        return simulateMatchViewVisible(at: index, section: section)?.renderedHomeImage
-    }
-    
-    func renderedAwayImageData(at index: Int, section: Int) -> Data? {
-        return simulateMatchViewVisible(at: index, section: section)?.renderedAwayImage
-    }
-    
-    func numberOfRenderedViews(section: Int) -> Int {
-        numberOfItems(in: section)
-    }
-    
-    func matchView(at item: Int, section: Int) -> UICollectionViewCell? {
-        cell(item: item, section: section)
-    }
-    
-    private var previousSection: Int { 0 }
-    private var upcomingSection: Int { 1 }
-}
-
-extension UIView {
-    func simulate() {
-        
-    }
-}
-
-extension MatchCell {
-    var isShowingHomeImageLoadingIndicator: Bool {
-        return homeImageContainer.isShimmering
-    }
-    
-    var isShowingAwayImageLoadingIndicator: Bool {
-        return awayImageContainer.isShimmering
-    }
-    
-    var homeText: String? {
-        return homeNameLabel.text
-    }
-    
-    var awayText: String? {
-        return awayNameLabel.text
-    }
-    
-    var dateText: String? {
-        return dateLabel.text
-    }
-    
-    var timeText: String? {
-        return timeLabel.text
-    }
-    
-    var renderedHomeImage: Data? {
-        return homeLogoImageView.image?.pngData()
-    }
-    
-    var renderedAwayImage: Data? {
-        return awayLogoImageView.image?.pngData()
-    }
 }

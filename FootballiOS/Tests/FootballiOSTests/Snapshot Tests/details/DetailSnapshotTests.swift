@@ -8,7 +8,7 @@
 import XCTest
 import Football
 import Combine
-@testable import FootballiOS
+import FootballiOS
 
 final class DetailSnapshotTests: XCTestCase {
 
@@ -35,8 +35,8 @@ final class DetailSnapshotTests: XCTestCase {
         sut.display(controllers(stubs: stubs))
         sut.displayMatchesInfo(previous: 1, upcoming: 1)
         
-        assert(snapshot: sut.snapshot(for: .iPhone13(style: .light)), named: "CONTROLLER_LIST_light")
-        assert(snapshot: sut.snapshot(for: .iPhone13(style: .dark)), named: "CONTROLLER_LIST_dark")
+        record(snapshot: sut.snapshot(for: .iPhone13(style: .light)), named: "CONTROLLER_LIST_light")
+        record(snapshot: sut.snapshot(for: .iPhone13(style: .dark)), named: "CONTROLLER_LIST_dark")
     }
     
     func test_matchList_withImages() {

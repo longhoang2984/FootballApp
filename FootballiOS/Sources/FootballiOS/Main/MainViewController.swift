@@ -75,7 +75,7 @@ public final class MainViewController: BaseViewController {
     }
     
     @objc public override func getData() {
-        onGetData?()
+        viewModel.send(.getDatas)
     }
     
     @objc private func filterTeamName() {
@@ -103,7 +103,7 @@ public final class MainViewController: BaseViewController {
                 default: break
                 }
             }
-            .store(in: &cancellables)
+            .store(in: &viewModel.cancellables)
     }
     
     public override func viewWillAppear(_ animated: Bool) {

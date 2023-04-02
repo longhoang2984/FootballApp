@@ -13,6 +13,7 @@ import FootballiOS
 public final class MainUIComposer {
     private init() {}
     
+    
     public static func mainComposedWith(
         teamLoader: @escaping () -> AnyPublisher<[Team], Error>,
         matchLoader: @escaping () -> AnyPublisher<[Match], Error>,
@@ -26,49 +27,21 @@ public final class MainUIComposer {
         let viewModel = AppViewModel(input: input, output: output)
         
         let mainVC = makeMainViewController(title: "Matches", viewModel: viewModel)
-        let logoAdapter = TeamLogoAdapter(controller: mainVC,
-                                          imageLoader: imageLoader,
+        let logoAdapter = TeamLogoAdapter(imageLoader: imageLoader,
                                           awayImageLoader: awayImageLoader,
                                           selection: selection)
-        
+       
         let adapter = LoadResourcePresentationAdapter(teamLoader: teamLoader,
                                                       matchLoader: matchLoader,
-                                                      adapter: logoAdapter,
                                                       onLoading: { input.send(.showLoading($0)) },
                                                       onError: { input.send(.showError($0)) },
                                                       onShowTeams: { input.send(.showTeams($0)) },
                                                       onShowData: { input.send(.showControllers(controllers: logoAdapter.handleSuccessData(teams: $0, matches: $1))) })
-        
-        bind(viewModel: viewModel, input: input, output: output)
-        
-        mainVC.onGetData = adapter.loadResource
+    
+        viewModel.onGetData = adapter.loadResource
         viewModel.filterMatch = adapter.filterMatchWithTeamName
         
         return mainVC
-    }
-    
-    private static func bind(viewModel: AppViewModel,
-                      input: PassthroughSubject<AppViewModel.Input, Never>,
-                      output: PassthroughSubject<AppViewModel.Output, Never>) {
-        input.sink { event in
-            switch event {
-            case .getDatas:
-                viewModel.onGetData?()
-            case let .showLoading(loading):
-                output.send(AppViewModel.Output.displayLoading(loading))
-            case let .showTeams(teams):
-                output.send(AppViewModel.Output.displayTeamNames(teams.map({ $0.name })))
-            case let .showControllers(controllers):
-                output.send(AppViewModel.Output.displayControllers(controllers))
-            case let .filterMatches(teamName):
-                viewModel.filterMatch?(teamName)
-            case let .showError(error):
-                output.send(AppViewModel.Output.displayError(error))
-            case let .showAllData(teams, matches):
-                output.send(AppViewModel.Output.displayAllData((teams, matches)))
-            }
-        }
-        .store(in: &viewModel.cancellables)
     }
     
     private static func makeMainViewController(title: String, viewModel: AppViewModel) -> MainViewController {

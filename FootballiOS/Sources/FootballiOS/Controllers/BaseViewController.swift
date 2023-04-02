@@ -33,7 +33,14 @@ public class BaseViewController: UIViewController {
         }
         
         ds.supplementaryViewProvider = { (collectionView, kind, index) -> UICollectionReusableView? in
-            self.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: index)
+            if kind == UICollectionView.elementKindSectionHeader {
+                let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: MatchHeaderView.self), for: index) as! MatchHeaderView
+                let type = MatchHeaderView.HeaderType(rawValue: index.section)
+                view.nameLabel.text = (type == .previous ? "Previous" : "Upcoming").uppercased()
+                return view
+            }
+            
+            return nil
         }
         
         return ds
@@ -53,6 +60,7 @@ public class BaseViewController: UIViewController {
     private func configureCollectionView() {
         collectionView.register(MatchCell.self, forCellWithReuseIdentifier: String(describing: MatchCell.self))
         collectionView.register(MatchHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: MatchHeaderView.self))
+        
         collectionView.bounces = true
         collectionView.dataSource = dataSource
         collectionView.delegate = self
@@ -143,18 +151,6 @@ extension BaseViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let dl = cellController(at: indexPath)?.flowLayoutDelegate
         return dl?.collectionView?(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath) ?? .zero
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: MatchHeaderView.self), for: indexPath) as! MatchHeaderView
-            let type = MatchHeaderView.HeaderType(rawValue: indexPath.section)
-            view.nameLabel.text = (type == .previous ? "Previous" : "Upcoming").uppercased()
-            return view
-        default:
-            return UICollectionReusableView()
-        }
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

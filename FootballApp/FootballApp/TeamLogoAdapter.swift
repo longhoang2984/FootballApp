@@ -21,14 +21,12 @@ final class TeamLogoAdapter {
     
     private let selection: (_ team: Team, _ image: UIImage?) -> Void
     private let onShowMatchesInfo: (_ previous: Int, _ upcoming: Int) -> Void
-    init(controller: UIViewController,
-         imageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
+    init(imageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
          awayImageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
          selection: @escaping (_ team: Team, _ image: UIImage?) -> Void,
          onShowMatchesInfo: @escaping (_ previous: Int, _ upcoming: Int) -> Void = { _, _ in }) {
         self.imageLoader = imageLoader
         self.awayImageLoader = awayImageLoader
-        self.controller = controller
         self.selection = selection
         self.onShowMatchesInfo = onShowMatchesInfo
     }
@@ -48,11 +46,11 @@ final class TeamLogoAdapter {
             })
             
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "dd/MM"
-            let date = dateFormatter.string(from: match.date)
+            dateFormatter.dateFormat = "dd/MM-HH:mm"
+            let component = dateFormatter.string(from: match.date).split(separator: "-")
             
-            dateFormatter.dateFormat = "HH:mm"
-            let time = dateFormatter.string(from: match.date)
+            let date = String(component.first ?? "")
+            let time = String(component.last ?? "")
             let displayModel = DisplayModel(date: date, time: time,
                                             description: match.description, home: match.home,
                                             away: match.away, homeLogo: home?.logo, awayLogo: away?.logo,
@@ -96,9 +94,9 @@ final class TeamLogoAdapter {
         let player = AVPlayer(url: videoURL!)
         let playerViewController = AVPlayerViewController()
         playerViewController.player = player
-        controller?.present(playerViewController, animated: true) {
-            playerViewController.player!.play()
-        }
+//        controller?.present(playerViewController, animated: true) {
+//            playerViewController.player!.play()
+//        }
     }
 }
 

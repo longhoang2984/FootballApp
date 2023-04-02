@@ -93,11 +93,11 @@ func controllers(stubs: [Stub]) -> [[CellController]] {
     var upcoming = [CellController]()
     stubs.forEach {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd/MM"
-        let date = dateFormatter.string(from: $0.match.date)
+        dateFormatter.dateFormat = "dd/MM-HH:mm"
+        let component = dateFormatter.string(from: $0.match.date).split(separator: "-")
         
-        dateFormatter.dateFormat = "HH:mm"
-        let time = dateFormatter.string(from: $0.match.date)
+        let date = String(component.first ?? "")
+        let time = String(component.last ?? "")
         let displayModel = DisplayModel(date: date, time: time,
                                         description: $0.match.description, home: $0.match.home,
                                         away: $0.match.away, homeLogo: $0.home.logo, awayLogo: $0.away.logo,
