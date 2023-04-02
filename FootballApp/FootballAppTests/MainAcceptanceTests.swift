@@ -66,6 +66,18 @@ final class MainAcceptanceTests: XCTestCase {
         XCTAssertNil(detail.renderedHomeImageData(at: 0, section: upcomingSection))
         XCTAssertNil(detail.renderedAwayImageData(at: 0, section: upcomingSection))
     }
+    
+    func test_onAwaySelection_displaysDetails() {
+        let detail = showDetailForAwayTeam()
+        detail.getData()
+        XCTAssertEqual(detail.numberOfRenderedViews(section: previousSection), 0)
+        XCTAssertNil(detail.renderedHomeImageData(at: 0, section: previousSection))
+        XCTAssertNil(detail.renderedAwayImageData(at: 0, section: previousSection))
+        
+        XCTAssertEqual(detail.numberOfRenderedViews(section: upcomingSection), 1)
+        XCTAssertEqual(detail.renderedHomeImageData(at: 0, section: upcomingSection), makeImagePanda())
+        XCTAssertEqual(detail.renderedAwayImageData(at: 0, section: upcomingSection), makeImageKing())
+    }
 
     // MARK: - Helpers
     private func launch(
@@ -91,6 +103,18 @@ final class MainAcceptanceTests: XCTestCase {
         let data = launch(httpClient: .online(response), teamStore: .empty, matchStore: .empty)
         
         data.simulateTapOnHomeTeamName(at: 0, section: previousSection)
+        RunLoop.current.run(until: Date())
+        
+        let nav = data.navigationController
+        let detail = nav?.topViewController as! TeamDetailViewController
+        detail.loadViewIfNeeded()
+        return detail
+    }
+    
+    private func showDetailForAwayTeam() -> TeamDetailViewController {
+        let data = launch(httpClient: .online(response), teamStore: .empty, matchStore: .empty)
+        
+        data.simulateTapOnAwayTeamName(at: 0, section: upcomingSection)
         RunLoop.current.run(until: Date())
         
         let nav = data.navigationController
