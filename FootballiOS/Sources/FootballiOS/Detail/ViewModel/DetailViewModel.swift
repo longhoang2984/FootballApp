@@ -13,8 +13,8 @@ import UIKit
 public class DetailViewModel: ViewModel {
     private let input: PassthroughSubject<Input, Never>
     private let output: PassthroughSubject<Output, Never>
-    private let team: Team
-    private let image: UIImage?
+    private(set) var team: Team
+    private(set) var image: UIImage?
     
     public init(team: Team,
                 image: UIImage?,
@@ -55,13 +55,30 @@ public class DetailViewModel: ViewModel {
     }
     
     public func transform() -> AnyPublisher<Output, Never> {
+        input.sink { [weak self] event in
+            switch event {
+            case .getDatas:
+                self?.onGetData?()
+            case let .showLoading(loading):
+                self?.output.send(.displayLoading(loading))
+            case let .showControllers(controllers):
+                self?.output.send(.displayControllers(controllers))
+            case let .showError(error):
+                self?.output.send(.displayError(error))
+            case let .showAllData(teams, matches):
+                self?.output.send(.displayAllData((teams, matches)))
+            case let .showSelectionTeam(team, image):
+                self?.output.send(.displaySelectionTeam(team: team, image: image))
+            case let .showMatchesInfo(previous, upcoming):
+                self?.output.send(.displayMatchesInfo(previous: previous, upcoming: upcoming))
+            }
+        }
+        .store(in: &cancellables)
         return output.eraseToAnyPublisher()
     }
     
     public func cancel() {
-        cancellables.forEach {
-            $0.cancel()
-        }
+        cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
     }
 }

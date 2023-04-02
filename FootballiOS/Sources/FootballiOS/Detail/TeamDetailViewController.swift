@@ -11,7 +11,9 @@ import Combine
 
 public final class TeamDetailViewController: BaseViewController {
     
-    public override init() {
+    private let viewModel: DetailViewModel
+    public init(viewModel: DetailViewModel) {
+        self.viewModel = viewModel
         super.init()
     }
     
@@ -48,6 +50,8 @@ public final class TeamDetailViewController: BaseViewController {
     public override func viewDidLoad() {
         setUpLogo()
         super.viewDidLoad()
+        title = viewModel.team.name
+        logoImageView.image = viewModel.image
     }
     
     private func setUpLogo() {
@@ -84,7 +88,7 @@ public final class TeamDetailViewController: BaseViewController {
     }
     
     @objc public override func getData() {
-        onGetData?()
+        viewModel.send(.getDatas)
     }
     
     public func displayImage(img: UIImage?) {
@@ -100,5 +104,26 @@ public final class TeamDetailViewController: BaseViewController {
     public func displayMatchesInfo(previous: Int, upcoming: Int) {
         previousLabel.text = "Played: \(previous) match(es)"
         upcomingLabel.text = "Upcoming: \(upcoming) match(es)"
+    }
+    
+    public override func bind() {
+        let output = viewModel.transform()
+        output
+            .eraseToAnyPublisher()
+            .sink { [weak self] ev in
+                switch ev {
+                case let .displayControllers(controllers):
+                    self?.display(controllers)
+                case let .displayError(error):
+                    self?.showErrorAlert(error: error)
+                case let .displaySelectionTeam(team, image):
+                    self?.displayImage(img: image)
+                    self?.title = team.name
+                case let .displayMatchesInfo(previous, upcoming):
+                    self?.displayMatchesInfo(previous: previous, upcoming: upcoming)
+                default: break
+                }
+            }
+            .store(in: &viewModel.cancellables)
     }
 }

@@ -1,8 +1,8 @@
 //
-//  MainUIIntegrationTests.swift
+//  DetailUIIntegrationTests.swift
 //  FootballAppTests
 //
-//  Created by Cửu Long Hoàng on 02/04/2023.
+//  Created by Cửu Long Hoàng on 03/04/2023.
 //
 
 import XCTest
@@ -10,13 +10,14 @@ import Football
 import FootballiOS
 @testable import FootballApp
 
-final class MainUIIntegrationTests: XCTestCase {
-    func test_mainView_hasTitle() {
+final class DetailUIIntegrationTests: XCTestCase {
+    func test_feedView_hasTitle() {
         let (sut, _) = makeSUT()
         
         sut.loadViewIfNeeded()
         
-        XCTAssertEqual(sut.title, "Matches")
+        XCTAssertEqual(sut.title, selectedTeam.name)
+        XCTAssertEqual(sut.logoImageView.image, img)
     }
     
     func test_teamSelection_notifiesHandler() {
@@ -25,7 +26,9 @@ final class MainUIIntegrationTests: XCTestCase {
         let previousMatch = uniquePreviousMatch(home: teamA.name, away: teamB.name)
         
         var selectedTeams = [TeamMessage]()
-        let (sut, loader) = makeSUT { selectedTeams.append(TeamMessage(team: $0, image: $1)) }
+        let (sut, loader) = makeSUT {
+            selectedTeams.append(TeamMessage(team: $0, image: $1))
+        }
         
         sut.loadViewIfNeeded()
         loader.completeTeamLoading(with: [teamA, teamB])
@@ -49,22 +52,26 @@ final class MainUIIntegrationTests: XCTestCase {
         loader.completeTeamLoading(with: [])
         XCTAssertEqual(loader.loadMatchCallCount, 1, "Expected a loading request once view is loaded")
     }
-
+    
     // MARK: - Helpers
     private func makeSUT(
         selection: @escaping (Team, UIImage?) -> Void = { _, _ in },
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (sut: MainViewController, loader: LoaderSpy) {
+    ) -> (sut: TeamDetailViewController, loader: LoaderSpy) {
         let loader = LoaderSpy()
-        let sut = MainUIComposer.mainComposedWith(teamLoader: loader.loadPublisher,
-                                                  matchLoader: loader.loadMatchPublisher,
-                                                  imageLoader: loader.loadTeamLogoPublisher,
-                                                  awayImageLoader: loader.loadTeamLogoPublisher,
-                                                  selection: selection)
+        let sut = DetailUIComposer.detailComposedWith(team: selectedTeam,
+                                                      image: img,
+                                                      teamLoader: loader.loadPublisher,
+                                                      matchLoader: loader.loadMatchPublisher,
+                                                      imageLoader: loader.loadTeamLogoPublisher,
+                                                      awayImageLoader: loader.loadTeamLogoPublisher,
+                                                      selection: selection)
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, loader)
     }
-
+    
+    private let selectedTeam = uniqueTeam(teamName: "Team A")
+    private let img = UIImage.make(withColor: .red)
 }
