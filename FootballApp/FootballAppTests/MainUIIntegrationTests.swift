@@ -18,6 +18,26 @@ final class MainUIIntegrationTests: XCTestCase {
         
         XCTAssertEqual(sut.title, "Matches")
     }
+    
+    func test_teamSelection_notifiesHandler() {
+        let teamA = uniqueTeam(teamName: "Team A")
+        let teamB = uniqueTeam(teamName: "Team B")
+        let previousMatch = uniquePreviousMatch(home: teamA.name, away: teamB.name)
+        
+        var selectedTeams = [TeamMessage]()
+        let (sut, teamLoader, matchLoader) = makeSUT { selectedTeams.append(TeamMessage(team: $0, image: $1)) }
+        
+        sut.loadViewIfNeeded()
+        teamLoader.completeTeamLoading(with: [teamA, teamB])
+        matchLoader.completeMatchLoading(with: [previousMatch])
+        
+        sut.simulateTapOnHomeTeamName(at: 0, section: 0)
+        XCTAssertEqual(selectedTeams, [TeamMessage(team: teamA, image: nil)])
+        
+        sut.simulateTapOnAwayTeamName(at: 0, section: 0)
+        XCTAssertEqual(selectedTeams, [TeamMessage(team: teamA, image: nil),
+                                       TeamMessage(team: teamB, image: nil)])
+    }
 
     // MARK: - Helpers
     private func makeSUT(
@@ -30,11 +50,22 @@ final class MainUIIntegrationTests: XCTestCase {
         let sut = MainUIComposer.mainComposedWith(teamLoader: teamLoader.loadPublisher,
                                                   matchLoader: matchLoader.loadPublisher,
                                                   imageLoader: teamLoader.loadTeamLogoPublisher,
-                                                  awayImageLoader: teamLoader.loadTeamLogoPublisher)
+                                                  awayImageLoader: teamLoader.loadTeamLogoPublisher,
+                                                  selection: selection)
         trackForMemoryLeaks(teamLoader, file: file, line: line)
         trackForMemoryLeaks(matchLoader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, teamLoader, matchLoader)
+    }
+    
+    private struct TeamMessage: Equatable {
+        private let team: Team
+        private let image: UIImage?
+        
+        init(team: Team, image: UIImage?) {
+            self.team = team
+            self.image = image
+        }
     }
     
     private func makeDetailSUT(
