@@ -22,9 +22,7 @@ Device | 14 Pro
 #### MVVM + Combine
 
 #### Missing:
-1. UI Tests, Integration Tests
-2. MVVM Coordinator Route.
-3. Correct way to present team detail.
+1. Correct way to present team detail.
 
 #### How to build
 1. Switch to `Football` scheme and run `CMD+B`

@@ -21,7 +21,8 @@ final class TeamLogoAdapter {
     
     private let selection: (_ team: Team, _ image: UIImage?) -> Void
     private let onShowMatchesInfo: (_ previous: Int, _ upcoming: Int) -> Void
-    init(imageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
+    init(controller: BaseViewController?,
+        imageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
          awayImageLoader: @escaping (URL) -> TeamLogoDataLoader.Publisher,
          selection: @escaping (_ team: Team, _ image: UIImage?) -> Void,
          onShowMatchesInfo: @escaping (_ previous: Int, _ upcoming: Int) -> Void = { _, _ in }) {
@@ -29,6 +30,7 @@ final class TeamLogoAdapter {
         self.awayImageLoader = awayImageLoader
         self.selection = selection
         self.onShowMatchesInfo = onShowMatchesInfo
+        self.controller = controller
     }
     
     func handleSuccessData(teams: [Team], matches: [Match]) -> [[CellController]] {
@@ -94,9 +96,9 @@ final class TeamLogoAdapter {
         let player = AVPlayer(url: videoURL!)
         let playerViewController = AVPlayerViewController()
         playerViewController.player = player
-//        controller?.present(playerViewController, animated: true) {
-//            playerViewController.player!.play()
-//        }
+        controller?.present(playerViewController, animated: true) {
+            playerViewController.player!.play()
+        }
     }
 }
 

@@ -31,7 +31,8 @@ public final class DetailUIComposer {
                                         output: output)
         
         let detailVC = makeDetailViewController(viewModel: viewModel)
-        let logoAdapter = TeamLogoAdapter(imageLoader: imageLoader,
+        let logoAdapter = TeamLogoAdapter(controller: detailVC,
+                                          imageLoader: imageLoader,
                                           awayImageLoader: awayImageLoader,
                                           selection: { selectionTeam,image in
             if team != selectionTeam {
