@@ -39,10 +39,10 @@ public final class MainUIComposer {
                                                       onShowTeams: { input.send(.showTeams($0)) },
                                                       onShowData: { input.send(.showControllers(controllers: logoAdapter.handleSuccessData(teams: $0, matches: $1))) })
         
-        viewModel.onGetData = adapter.loadResource
-        viewModel.filterMatch = adapter.filterMatchWithTeamName
-        
         bind(viewModel: viewModel, input: input, output: output)
+        
+        mainVC.onGetData = adapter.loadResource
+        viewModel.filterMatch = adapter.filterMatchWithTeamName
         
         return mainVC
     }

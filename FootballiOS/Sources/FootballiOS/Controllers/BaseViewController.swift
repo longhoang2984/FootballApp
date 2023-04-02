@@ -40,7 +40,7 @@ public class BaseViewController: UIViewController {
         
     }()
     
-    private let loadingIndicator = LoadingIndicator()
+    public let loadingIndicator = LoadingIndicator()
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,15 +89,15 @@ public class BaseViewController: UIViewController {
         }
     }
     
-    func startLoading() {
+    public func startLoading() {
         addChild(loadingIndicator)
         loadingIndicator.view.frame = view.frame
         view.addSubview(loadingIndicator.view)
         loadingIndicator.didMove(toParent: self)
-        loadingIndicator.willMove(toParent: nil)
     }
     
-    func endLoading() {
+    public func endLoading() {
+        loadingIndicator.willMove(toParent: nil)
         loadingIndicator.view.removeFromSuperview()
         loadingIndicator.removeFromParent()
     }
@@ -163,10 +163,10 @@ extension BaseViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-class LoadingIndicator: UIViewController {
+public final class LoadingIndicator: UIViewController {
     var spinner = UIActivityIndicatorView(style: .large)
     
-    override func loadView() {
+    public override func loadView() {
         view = UIView()
         view.backgroundColor = .secondarySystemBackground
         

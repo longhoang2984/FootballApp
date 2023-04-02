@@ -50,7 +50,6 @@ public final class MainViewController: BaseViewController {
     }
     
     public override func layoutCollectionView() {
-        
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: filterField.bottomAnchor, constant: 8),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -76,7 +75,7 @@ public final class MainViewController: BaseViewController {
     }
     
     @objc public override func getData() {
-        viewModel.send(.getDatas)
+        onGetData?()
     }
     
     @objc private func filterTeamName() {
@@ -90,7 +89,6 @@ public final class MainViewController: BaseViewController {
     public override func bind() {
         let output = viewModel.transform()
         output
-//            .receive(on: DispatchQueue.main)
             .sink { [weak self] ev in
                 switch ev {
                 case let .displayTeamNames(teamNames):
