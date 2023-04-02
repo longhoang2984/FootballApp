@@ -22,9 +22,6 @@ public final class MainViewController: BaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let refreshControl = UIRefreshControl()
-    public var onGetData: (() -> Void)?
-    
     private lazy var teamPickerView: UIPickerView = {
         let view = UIPickerView()
         view.dataSource = self

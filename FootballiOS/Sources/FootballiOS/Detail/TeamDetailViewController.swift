@@ -21,9 +21,6 @@ public final class TeamDetailViewController: BaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public var onGetData: (() -> Void)?
-    public var onViewWillDisapear: (() -> Void)?
-    
     private(set) public lazy var logoImageView: UIImageView = {
         let imgView = UIImageView()
         imgView.translatesAutoresizingMaskIntoConstraints = false
@@ -93,12 +90,6 @@ public final class TeamDetailViewController: BaseViewController {
     
     public func displayImage(img: UIImage?) {
         logoImageView.image = img
-    }
-    
-    public override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        display([])
-        onViewWillDisapear?()
     }
     
     public func displayMatchesInfo(previous: Int, upcoming: Int) {
