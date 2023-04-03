@@ -74,6 +74,22 @@ final class MainUIIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loadMatchCallCount, 0, "Expected no loading requests before view is loaded")
     }
     
+    func test_loadMatchCompletion_matchLoaderFailure() {
+        let (sut, loader) = makeSUT()
+        XCTAssertEqual(loader.loadTeamCallCount, 0, "Expected no loading requests before view is loaded")
+        XCTAssertEqual(loader.loadMatchCallCount, 0, "Expected no loading requests before view is loaded")
+        
+        sut.loadViewIfNeeded()
+        let teamA = uniqueTeam(teamName: "Team A")
+        let teamB = uniqueTeam(teamName: "Team B")
+        
+        loader.completeTeamLoading(with: [teamA, teamB])
+        loader.completeMatchLoadingWithError()
+        
+        XCTAssertEqual(loader.loadTeamCallCount, 1, "Expected no loading requests before view is loaded")
+        XCTAssertEqual(loader.loadMatchCallCount, 1, "Expected no loading requests before view is loaded")
+    }
+    
     func test_matchView_loadsImageURLWhenVisible() {
         let teamA = uniqueTeam(teamName: "Team A")
         let teamB = uniqueTeam(teamName: "Team B")

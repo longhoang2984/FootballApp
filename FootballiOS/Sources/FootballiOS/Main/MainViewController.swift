@@ -35,6 +35,7 @@ public final class MainViewController: BaseViewController {
         field.translatesAutoresizingMaskIntoConstraints = false
         field.borderStyle = .roundedRect
         field.inputView = teamPickerView
+        field.text = "All"
         return field
     }()
     

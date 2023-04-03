@@ -51,6 +51,8 @@ extension MatchCellController: UICollectionViewDataSource, UICollectionViewDeleg
         cell?.highlightButton.isHidden = model.highlights == nil
         cell?.awayWinnerImageView.isHidden = model.winner != model.away
         cell?.homeWinnerImageView.isHidden = model.winner != model.home
+        cell?.homeImageContainer.isShimmering = true
+        cell?.awayImageContainer.isShimmering = true
         
         didRequestImage()
         cell?.onShowHighlight = onShowHighlight
