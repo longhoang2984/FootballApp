@@ -68,6 +68,24 @@ final class MainUIIntegrationTests: XCTestCase {
         sut.simulateMatchViewVisible(at: 0, section: 1)
         XCTAssertEqual(loader.loadedImageURLs, [teamA.logo, teamB.logo], "Expected second image URL request once second view also becomes visible")
     }
+    
+    func test_matchView_cancelsImageLoadingWhenNotVisibleAnymore() {
+        let teamA = uniqueTeam(teamName: "Team A")
+        let teamB = uniqueTeam(teamName: "Team B")
+        let previousMatch = uniquePreviousMatch(home: teamA.name, away: teamB.name)
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeTeamLoading(with: [teamA, teamB])
+        loader.completeMatchLoading(with: [previousMatch])
+        XCTAssertEqual(loader.cancelledImageURLs, [], "Expected no cancelled image URL requests until image is not visible")
+        
+        sut.simulateMatchViewNotVisible(at: 0, section: 0)
+        XCTAssertEqual(loader.cancelledImageURLs, [teamA.logo, teamB.logo], "Expected one cancelled image URL request once first image is not visible anymore")
+        
+        sut.simulateMatchViewVisible(at: 0, section: 0)
+        XCTAssertEqual(loader.cancelledImageURLs, [teamA.logo, teamB.logo], "Expected two cancelled image URL requests once second image is also not visible anymore")
+    }
 
     // MARK: - Helpers
     private func makeSUT(
