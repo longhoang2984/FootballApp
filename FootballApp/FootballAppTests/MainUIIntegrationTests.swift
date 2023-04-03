@@ -50,6 +50,18 @@ final class MainUIIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loadMatchCallCount, 1, "Expected a loading request once view is loaded")
     }
     
+    func test_loadMatchCompletion_rendersSuccessfullyLoaded() {
+        let teamA = uniqueTeam(teamName: "Team A")
+        let teamB = uniqueTeam(teamName: "Team B")
+        let previousMatch = uniquePreviousMatch(home: teamA.name, away: teamB.name)
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeTeamLoading(with: [teamA, teamB])
+        loader.completeMatchLoading(with: [previousMatch])
+        assertThat(sut, isRendering: [previousMatch])
+    }
+    
     func test_matchView_loadsImageURLWhenVisible() {
         let teamA = uniqueTeam(teamName: "Team A")
         let teamB = uniqueTeam(teamName: "Team B")
@@ -104,4 +116,40 @@ final class MainUIIntegrationTests: XCTestCase {
         return (sut, loader)
     }
 
+    func assertThat(_ sut: BaseViewController, isRendering matches: [Match], file: StaticString = #filePath, line: UInt = #line) {
+        sut.view.enforceLayoutCycle()
+        
+        guard sut.numberOfRenderedViews(section: 0) == matches.count else {
+            return XCTFail("Expected \(matches.count) matches, got \(sut.numberOfRenderedViews(section: 0)) instead.", file: file, line: line)
+        }
+        
+        matches.enumerated().forEach { index, match in
+            assertThat(sut, hasViewConfiguredFor: match, at: index, file: file, line: line)
+        }
+        
+        executeRunLoopToCleanUpReferences()
+    }
+    
+    func assertThat(_ sut: BaseViewController, hasViewConfiguredFor match: Match, at index: Int, file: StaticString = #filePath, line: UInt = #line) {
+        let view = sut.matchView(at: index, section: 0)
+        
+        guard let cell = view as? MatchCell else {
+            return XCTFail("Expected \(MatchCell.self) instance, got \(String(describing: view)) instead", file: file, line: line)
+        }
+        
+        XCTAssertEqual(cell.homeText, match.home, "Expected location text to be \(String(describing: match.home)) for match view at index (\(index))", file: file, line: line)
+        
+        XCTAssertEqual(cell.awayText, match.away, "Expected location text to be \(String(describing: match.away)) for match view at index (\(index))", file: file, line: line)
+    }
+    
+    private func executeRunLoopToCleanUpReferences() {
+        RunLoop.current.run(until: Date())
+    }
+}
+
+extension UIView {
+    func enforceLayoutCycle() {
+        layoutIfNeeded()
+        RunLoop.current.run(until: Date())
+    }
 }
