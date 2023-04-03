@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F40391629DAA3D800F0AD4C /* UIButton+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F40391529DAA3D800F0AD4C /* UIButton+TestHelpers.swift */; };
+		2F40391829DAA3F700F0AD4C /* UIControl+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F40391729DAA3F700F0AD4C /* UIControl+TestHelpers.swift */; };
 		2F4EC1BD29C08EB400B365AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4EC1BC29C08EB400B365AD /* AppDelegate.swift */; };
 		2F4EC1BF29C08EB400B365AD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4EC1BE29C08EB400B365AD /* SceneDelegate.swift */; };
 		2F4EC1C429C08EB400B365AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F4EC1C229C08EB400B365AD /* Main.storyboard */; };
@@ -47,6 +49,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2F40391529DAA3D800F0AD4C /* UIButton+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+TestHelpers.swift"; sourceTree = "<group>"; };
+		2F40391729DAA3F700F0AD4C /* UIControl+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+TestHelpers.swift"; sourceTree = "<group>"; };
 		2F4EC1B929C08EB400B365AD /* FootballApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FootballApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F4EC1BC29C08EB400B365AD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2F4EC1BE29C08EB400B365AD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -171,6 +175,8 @@
 				2F597B0229D9C4ED00E86DBE /* MatchCell+TestHelpers.swift */,
 				2F597B0629D9CA2300E86DBE /* UIIntegrationTests+LoaderSpy.swift */,
 				2F597B0829D9CB6F00E86DBE /* SharedTestHelpers.swift */,
+				2F40391529DAA3D800F0AD4C /* UIButton+TestHelpers.swift */,
+				2F40391729DAA3F700F0AD4C /* UIControl+TestHelpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -299,12 +305,14 @@
 				2F597AF929D950C100E86DBE /* MainAcceptanceTests.swift in Sources */,
 				2F597AF329D94F2500E86DBE /* HTTPClientStub.swift in Sources */,
 				2F597B0729D9CA2300E86DBE /* UIIntegrationTests+LoaderSpy.swift in Sources */,
+				2F40391829DAA3F700F0AD4C /* UIControl+TestHelpers.swift in Sources */,
 				2F597B0329D9C4ED00E86DBE /* MatchCell+TestHelpers.swift in Sources */,
 				2F597AFB29D9512500E86DBE /* InMemoryTeamStore.swift in Sources */,
 				2F597AFF29D9571200E86DBE /* UIImage+TestHelpers.swift in Sources */,
 				2F597AF529D94F7B00E86DBE /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 				2F597AFD29D951FF00E86DBE /* InMemoryMatchStore.swift in Sources */,
 				2F597B0929D9CB6F00E86DBE /* SharedTestHelpers.swift in Sources */,
+				2F40391629DAA3D800F0AD4C /* UIButton+TestHelpers.swift in Sources */,
 				2F597AF729D9501000E86DBE /* SceneDelegateTests.swift in Sources */,
 				2F597B0129D9C4C100E86DBE /* BaseViewController+TestHelpers.swift in Sources */,
 				2F597B0529D9C53D00E86DBE /* MainUIIntegrationTests.swift in Sources */,

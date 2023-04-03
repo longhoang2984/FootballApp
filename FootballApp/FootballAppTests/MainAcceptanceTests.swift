@@ -94,6 +94,34 @@ final class MainAcceptanceTests: XCTestCase {
         XCTAssertEqual(data.numberOfRenderedViews(section: previousSection), 1)
         XCTAssertEqual(data.renderedHomeImageData(at: 0, section: previousSection), makeImageEagle())
         XCTAssertEqual(data.renderedAwayImageData(at: 0, section: previousSection), makeImageDragons())
+        
+        XCTAssertEqual(data.numberOfRenderedViews(section: upcomingSection), 0)
+        XCTAssertNil(data.renderedHomeImageData(at: 0, section: upcomingSection))
+        XCTAssertNil(data.renderedAwayImageData(at: 0, section: upcomingSection))
+    }
+    
+    func test_displaysRemoteMatchAndTeamWhenCustomerHasConnectivity_simulateFilterField() {
+        let data = launch(httpClient: .online(response), teamStore: .empty, matchStore: .empty)
+        
+        XCTAssertEqual(data.numberOfRenderedViews(section: previousSection), 1)
+        XCTAssertEqual(data.renderedHomeImageData(at: 0, section: previousSection), makeImageEagle())
+        XCTAssertEqual(data.renderedAwayImageData(at: 0, section: previousSection), makeImageDragons())
+        
+        XCTAssertEqual(data.numberOfRenderedViews(section: upcomingSection), 1)
+        XCTAssertEqual(data.renderedHomeImageData(at: 0, section: upcomingSection), makeImagePanda())
+        XCTAssertEqual(data.renderedAwayImageData(at: 0, section: upcomingSection), makeImageKing())
+        
+        data.simulateOpenTeamPicker()
+        data.simulateSelectTeamName(at: 3)
+        data.filterTeamName()
+        
+        XCTAssertEqual(data.numberOfRenderedViews(section: previousSection), 0)
+        XCTAssertNil(data.renderedHomeImageData(at: 0, section: previousSection))
+        XCTAssertNil(data.renderedAwayImageData(at: 0, section: previousSection))
+        
+        XCTAssertEqual(data.numberOfRenderedViews(section: upcomingSection), 1)
+        XCTAssertEqual(data.renderedHomeImageData(at: 0, section: upcomingSection), makeImagePanda())
+        XCTAssertEqual(data.renderedAwayImageData(at: 0, section: upcomingSection), makeImageKing())
     }
 
     // MARK: - Helpers
@@ -184,7 +212,11 @@ final class MainAcceptanceTests: XCTestCase {
     }
     
     private func makeTeamData() -> Data {
-        return try! JSONSerialization.data(withJSONObject: ["teams": [["id":"767ec50c-7fdb-4c3d-98f9-d6727ef8252b","name":"Team Red Dragons","logo":"https://tstzj.s3.amazonaws.com/dragons.png"],["id":"7b4d8114-742b-4410-971a-500162101158","name":"Team Cool Eagles","logo":"https://tstzj.s3.amazonaws.com/eagle.png"],["id":"a3034ee6-eb8b-11ec-8ea0-0242ac120002","name":"Team Angry Pandas","logo":"https://tstzj.s3.amazonaws.com/panda.png"],["id":"01490dfe-0bc7-42ad-b471-2fba2b9b8f5e","name":"Team Win Kings","logo":"https://tstzj.s3.amazonaws.com/kings.png"]]])
+        return try! JSONSerialization.data(withJSONObject: ["teams": [
+            ["id":"767ec50c-7fdb-4c3d-98f9-d6727ef8252b","name":"Team Red Dragons","logo":"https://tstzj.s3.amazonaws.com/dragons.png"],
+            ["id":"7b4d8114-742b-4410-971a-500162101158","name":"Team Cool Eagles","logo":"https://tstzj.s3.amazonaws.com/eagle.png"],
+            ["id":"a3034ee6-eb8b-11ec-8ea0-0242ac120002","name":"Team Angry Pandas","logo":"https://tstzj.s3.amazonaws.com/panda.png"],
+            ["id":"01490dfe-0bc7-42ad-b471-2fba2b9b8f5e","name":"Team Win Kings","logo":"https://tstzj.s3.amazonaws.com/kings.png"]]])
     }
     
     private func makeImageDragons() -> Data { UIImage.make(withColor: .red).pngData()! }
@@ -203,5 +235,9 @@ extension MainViewController {
     func simulateFilterName() {
         simulateSelectTeamName(at: 1)
         filterTeamName()
+    }
+    
+    func simulateOpenTeamPicker() {
+        filterField.simulate(event: .touchUpInside)
     }
 }
