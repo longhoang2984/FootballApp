@@ -22,20 +22,18 @@ public final class MainViewController: BaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private lazy var teamPickerView: UIPickerView = {
+    public lazy var teamPickerView: UIPickerView = {
         let view = UIPickerView()
         view.dataSource = self
         view.delegate = self
         return view
     }()
     
-    private var selectedTeamName = "All"
     private var teamNames = ["All"]
-    private lazy var filterField: UITextField = {
+    public lazy var filterField: UITextField = {
         let field = UITextField()
         field.translatesAutoresizingMaskIntoConstraints = false
         field.borderStyle = .roundedRect
-        field.text = selectedTeamName
         field.inputView = teamPickerView
         return field
     }()
@@ -75,10 +73,9 @@ public final class MainViewController: BaseViewController {
         viewModel.send(.getDatas)
     }
     
-    @objc private func filterTeamName() {
+    @objc public final func filterTeamName() {
         filterField.resignFirstResponder()
         let name = self.teamNames[self.teamPickerView.selectedRow(inComponent: 0)]
-        self.selectedTeamName = name
         self.filterField.text = name
         self.viewModel.send(.filterMatches(teamName: name))
     }

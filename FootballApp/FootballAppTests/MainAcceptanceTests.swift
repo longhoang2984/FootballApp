@@ -89,6 +89,11 @@ final class MainAcceptanceTests: XCTestCase {
         XCTAssertEqual(data.numberOfRenderedViews(section: upcomingSection), 1)
         XCTAssertEqual(data.renderedHomeImageData(at: 0, section: upcomingSection), makeImagePanda())
         XCTAssertEqual(data.renderedAwayImageData(at: 0, section: upcomingSection), makeImageKing())
+        
+        data.simulateFilterName()
+        XCTAssertEqual(data.numberOfRenderedViews(section: previousSection), 1)
+        XCTAssertEqual(data.renderedHomeImageData(at: 0, section: previousSection), makeImageEagle())
+        XCTAssertEqual(data.renderedAwayImageData(at: 0, section: previousSection), makeImageDragons())
     }
 
     // MARK: - Helpers
@@ -186,4 +191,17 @@ final class MainAcceptanceTests: XCTestCase {
     private func makeImageEagle() -> Data { UIImage.make(withColor: .green).pngData()! }
     private func makeImagePanda() -> Data { UIImage.make(withColor: .brown).pngData()! }
     private func makeImageKing() -> Data { UIImage.make(withColor: .yellow).pngData()! }
+}
+
+extension MainViewController {
+    func simulateSelectTeamName(at row: Int = 0, component: Int = 0) {
+        guard teamPickerView.numberOfComponents > 0 else { return }
+        guard teamPickerView.numberOfRows(inComponent: component) > row else { return }
+        teamPickerView.selectRow(row, inComponent: component, animated: false)
+    }
+    
+    func simulateFilterName() {
+        simulateSelectTeamName(at: 1)
+        filterTeamName()
+    }
 }

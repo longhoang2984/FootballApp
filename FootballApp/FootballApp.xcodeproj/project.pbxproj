@@ -23,7 +23,7 @@
 		2F597B0129D9C4C100E86DBE /* BaseViewController+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597B0029D9C4C000E86DBE /* BaseViewController+TestHelpers.swift */; };
 		2F597B0329D9C4ED00E86DBE /* MatchCell+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597B0229D9C4ED00E86DBE /* MatchCell+TestHelpers.swift */; };
 		2F597B0529D9C53D00E86DBE /* MainUIIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597B0429D9C53D00E86DBE /* MainUIIntegrationTests.swift */; };
-		2F597B0729D9CA2300E86DBE /* MainUIIntegrationTests+LoaderSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597B0629D9CA2300E86DBE /* MainUIIntegrationTests+LoaderSpy.swift */; };
+		2F597B0729D9CA2300E86DBE /* UIIntegrationTests+LoaderSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597B0629D9CA2300E86DBE /* UIIntegrationTests+LoaderSpy.swift */; };
 		2F597B0929D9CB6F00E86DBE /* SharedTestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597B0829D9CB6F00E86DBE /* SharedTestHelpers.swift */; };
 		2F597B0B29DA0BE000E86DBE /* DetailUIIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F597B0A29DA0BE000E86DBE /* DetailUIIntegrationTests.swift */; };
 		2F6AF9A929C3267A001A7219 /* MainUIComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6AF9A829C32679001A7219 /* MainUIComposer.swift */; };
@@ -67,7 +67,7 @@
 		2F597B0029D9C4C000E86DBE /* BaseViewController+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseViewController+TestHelpers.swift"; sourceTree = "<group>"; };
 		2F597B0229D9C4ED00E86DBE /* MatchCell+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MatchCell+TestHelpers.swift"; sourceTree = "<group>"; };
 		2F597B0429D9C53D00E86DBE /* MainUIIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainUIIntegrationTests.swift; sourceTree = "<group>"; };
-		2F597B0629D9CA2300E86DBE /* MainUIIntegrationTests+LoaderSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainUIIntegrationTests+LoaderSpy.swift"; sourceTree = "<group>"; };
+		2F597B0629D9CA2300E86DBE /* UIIntegrationTests+LoaderSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIIntegrationTests+LoaderSpy.swift"; sourceTree = "<group>"; };
 		2F597B0829D9CB6F00E86DBE /* SharedTestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTestHelpers.swift; sourceTree = "<group>"; };
 		2F597B0A29DA0BE000E86DBE /* DetailUIIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailUIIntegrationTests.swift; sourceTree = "<group>"; };
 		2F6AF9A529C0E6EA001A7219 /* FootballiOS */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FootballiOS; path = ../FootballiOS; sourceTree = "<group>"; };
@@ -169,7 +169,7 @@
 				2F597AFE29D9571200E86DBE /* UIImage+TestHelpers.swift */,
 				2F597B0029D9C4C000E86DBE /* BaseViewController+TestHelpers.swift */,
 				2F597B0229D9C4ED00E86DBE /* MatchCell+TestHelpers.swift */,
-				2F597B0629D9CA2300E86DBE /* MainUIIntegrationTests+LoaderSpy.swift */,
+				2F597B0629D9CA2300E86DBE /* UIIntegrationTests+LoaderSpy.swift */,
 				2F597B0829D9CB6F00E86DBE /* SharedTestHelpers.swift */,
 			);
 			path = Helpers;
@@ -298,7 +298,7 @@
 			files = (
 				2F597AF929D950C100E86DBE /* MainAcceptanceTests.swift in Sources */,
 				2F597AF329D94F2500E86DBE /* HTTPClientStub.swift in Sources */,
-				2F597B0729D9CA2300E86DBE /* MainUIIntegrationTests+LoaderSpy.swift in Sources */,
+				2F597B0729D9CA2300E86DBE /* UIIntegrationTests+LoaderSpy.swift in Sources */,
 				2F597B0329D9C4ED00E86DBE /* MatchCell+TestHelpers.swift in Sources */,
 				2F597AFB29D9512500E86DBE /* InMemoryTeamStore.swift in Sources */,
 				2F597AFF29D9571200E86DBE /* UIImage+TestHelpers.swift in Sources */,

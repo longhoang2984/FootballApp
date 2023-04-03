@@ -1,5 +1,5 @@
 //
-//  MainUIIntegrationTests.swift
+//  UIIntegrationTests+LoaderSpy.swift
 //  FootballAppTests
 //
 //  Created by Cửu Long Hoàng on 02/04/2023.
