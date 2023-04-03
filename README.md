@@ -24,9 +24,8 @@ Device | 14 Pro
 #### Missing:
 Test Coverage is not 100%
 - Football Package: 93.2%
-- FootballiOS Package: 78.7%
-- FootballApp: 86.7%
-    Note: Almost missing is support functions.
+- FootballiOS Package: 78.8%
+- FootballApp: 88.9%
 
 #### How to build
 1. Switch to `Football` scheme and run `CMD+B`
