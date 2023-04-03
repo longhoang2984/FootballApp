@@ -49,6 +49,25 @@ final class MainUIIntegrationTests: XCTestCase {
         loader.completeTeamLoading(with: [])
         XCTAssertEqual(loader.loadMatchCallCount, 1, "Expected a loading request once view is loaded")
     }
+    
+    func test_matchView_loadsImageURLWhenVisible() {
+        let teamA = uniqueTeam(teamName: "Team A")
+        let teamB = uniqueTeam(teamName: "Team B")
+        let previousMatch = uniquePreviousMatch(home: teamA.name, away: teamB.name)
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeTeamLoading(with: [teamA, teamB])
+        loader.completeMatchLoading(with: [previousMatch])
+        
+        XCTAssertEqual(loader.loadedImageURLs, [], "Expected no image URL requests until views become visible")
+        
+        sut.simulateMatchViewVisible(at: 0, section: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [teamA.logo, teamB.logo], "Expected first image URL request once first view becomes visible")
+        
+        sut.simulateMatchViewVisible(at: 0, section: 1)
+        XCTAssertEqual(loader.loadedImageURLs, [teamA.logo, teamB.logo], "Expected second image URL request once second view also becomes visible")
+    }
 
     // MARK: - Helpers
     private func makeSUT(
